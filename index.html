@@ -2,7 +2,6 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<!-- Meta tag cruciale per la responsività sui dispositivi mobili -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>🌴 Indonesia 2026</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -27,7 +26,7 @@ header{background:linear-gradient(135deg,var(--ocean) 0%,var(--lagoon) 80%,#1cb1
 .hdr-top{display:flex;align-items:center;gap:12px;padding:12px 16px; position: relative;}
 .hdr-title h1{font-size:20px;font-weight:800;letter-spacing:-0.5px;}
 .hdr-title .sub{font-size:11px;opacity:0.85;margin-top:2px;}
-.hdr-right{margin-left:auto;text-align:right;font-size:11px;opacity:0.9;line-height:1.4; padding-right: 40px;} /* Spazio per l'hamburger */
+.hdr-right{margin-left:auto;text-align:right;font-size:11px;opacity:0.9;line-height:1.4; padding-right: 40px;}
 .hdr-right strong{font-size:18px;display:block;color:var(--turmeric);}
 
 /* Hamburger Button */
@@ -42,12 +41,12 @@ header{background:linear-gradient(135deg,var(--ocean) 0%,var(--lagoon) 80%,#1cb1
   font-size: 26px;
   cursor: pointer;
   z-index: 301;
-  display: block; /* Visibile di default su mobile */
+  display: block;
 }
 
 /* Navigazione */
 nav {
-  display: none; /* Nascosto su mobile, mostrato via JS o CSS */
+  display: none;
   flex-direction: column;
   background: var(--ocean);
   position: absolute;
@@ -88,7 +87,7 @@ input[type=file]{display:none;}
 input[type=text],input[type=date],input[type=number],select,textarea{
   padding:10px 12px;border:1.5px solid var(--border);border-radius:8px; width: 100%;
   font:inherit;color:var(--ink);background:#fbfcfd;outline:none;transition:border 0.2s;
-  font-size:16px; /* 16px previene lo zoom automatico su iOS */
+  font-size:16px;
 }
 input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,select:focus,textarea:focus{border-color:var(--lagoon);}
 select{cursor:pointer;}
@@ -154,7 +153,7 @@ select{cursor:pointer;}
 
 /* CALENDAR - Ottimizzato per Mobile */
 .cal-wrap{background:#fff;border:1px solid var(--border);border-radius:12px;padding:8px;margin-bottom:16px;box-shadow:var(--shadow); width:100%;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;} /* minmax evita overflow */
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;}
 .cal-dh{text-align:center;font-size:9px;font-weight:800;color:var(--mist);padding:2px 0;text-transform:uppercase;}
 .cal-d{border-radius:6px;padding:3px;min-height:42px;font-size:10px;border:1.5px solid transparent;cursor:pointer;transition:all 0.15s; overflow:hidden;}
 .cal-d.empty{cursor:default;background:transparent!important;}
@@ -196,7 +195,7 @@ select{cursor:pointer;}
 .form-row{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
 .form-row label{font-size:11px;font-weight:700;color:var(--mist);text-transform:uppercase;letter-spacing:0.5px;}
 .form-row textarea{resize:vertical;min-height:80px;}
-.form-2col{display:grid;grid-template-columns:1fr;gap:10px;} /* 1 col default (mobile) */
+.form-2col{display:grid;grid-template-columns:1fr;gap:10px;}
 .modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
 
 .empty{text-align:center;padding:32px 20px;color:var(--mist);}
@@ -211,9 +210,12 @@ code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-fa
 .map-tooltip{background:#073b5a;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;padding:4px 8px;}
 .map-tooltip::before{border-top-color:#073b5a;}
 
-/* MEDIA QUERIES PER DESKTOP/TABLET (schermi più larghi) */
+/* TOAST NOTIFICATIONS */
+@keyframes fadeInToast { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes fadeOutToast { from { opacity: 1; transform: translate(-50%, 0); } to { opacity: 0; transform: translate(-50%, -20px); } }
+
+/* MEDIA QUERIES PER DESKTOP/TABLET */
 @media(min-width:640px){
-  /* Ripristina la navbar classica per desktop */
   .menu-btn { display: none; }
   .hdr-right { padding-right: 0; }
   nav { display: flex; position: static; flex-direction: row; box-shadow: none; padding: 0 8px; overflow-x: auto; scrollbar-width: none; }
@@ -247,7 +249,6 @@ code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-fa
       <strong id="hdr-countdown">—</strong>
       giorni alla partenza
     </div>
-    <!-- Bottone Menu Hamburger per Mobile -->
     <button class="menu-btn" onclick="toggleMenu()">☰</button>
   </div>
   <nav id="main-nav">
@@ -271,7 +272,6 @@ code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-fa
     <button class="btn btn-accent btn-sm" onclick="exportExcel()">⬇️ Esporta</button>
     <div class="spacer"></div>
     <button class="btn btn-green btn-sm" onclick="manualSave()">☁️ Salva</button>
-    <!-- Tasto Sync modificato per forzare l'aggiornamento -->
     <button class="btn btn-ghost btn-sm" onclick="loadFirestore(true, true)">🔄</button>
     <div class="status-bar" id="last-saved">💾 Pronto</div>
   </div>
@@ -288,12 +288,24 @@ code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-fa
 
 <!-- ITINERARIO -->
 <div id="tab-itinerario" class="tab">
-  <div class="toolbar">
-    <input type="text" id="it-search" placeholder="🔍 Cerca…" style="flex:1;min-width:120px;" oninput="renderItinerary()">
-    <select id="it-dest" onchange="renderItinerary()">
-      <option value="">Tutte</option>
+  <div class="toolbar" style="gap: 8px;">
+    <input type="text" id="it-search" placeholder="🔍 Cerca…" style="flex:1; min-width:140px; font-size:14px;" oninput="renderItinerary()">
+    <select id="it-dest" onchange="renderItinerary()" style="max-width: 150px; font-size: 14px;">
+      <option value="">Mete (Tutte)</option>
     </select>
-    <button class="btn btn-primary btn-sm" onclick="openAddDay()">+ Giorno</button>
+    <select id="it-type" onchange="renderItinerary()" style="max-width: 150px; font-size: 14px;">
+      <option value="">Tutti i tipi</option>
+      <option value="volo">✈️ Solo Voli</option>
+      <option value="traghetto">⛵ Solo Traghetti</option>
+      <option value="hotel">🏨 Solo Alloggi</option>
+    </select>
+    <select id="it-pay" onchange="renderItinerary()" style="max-width: 150px; font-size: 14px;">
+      <option value="">Tutti i pagamenti</option>
+      <option value="SI">✓ Pagato</option>
+      <option value="PARZ">◑ Parziale</option>
+      <option value="NO">✗ Non pagato</option>
+    </select>
+    <button class="btn btn-primary btn-sm" onclick="openAddDayModal()">+ Giorno</button>
   </div>
   <div class="timeline" id="tl-cont"></div>
 </div>
@@ -346,6 +358,25 @@ code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-fa
 </div>
 
 </main>
+
+<!-- MODAL ADD DAY -->
+<div class="modal-overlay" id="modal-add-day">
+  <div class="modal" style="max-width: 400px; border-radius: 16px; margin: auto;">
+    <h3>📅 Nuovo giorno</h3>
+    <div class="form-row">
+      <label>Data</label>
+      <input type="date" id="ad-data">
+    </div>
+    <div class="form-row">
+      <label>Destinazione (Sigla o Nome)</label>
+      <input type="text" id="ad-dest" placeholder="Es. UBUD">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-day')">Annulla</button>
+      <button class="btn btn-primary" onclick="saveAddDay()">💾 Aggiungi</button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL TRANSFER -->
 <div class="modal-overlay" id="modal-transfer">
@@ -407,19 +438,37 @@ code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-fa
   </div>
 </div>
 
+<!-- CUSTOM CONFIRM MODAL -->
+<div class="modal-overlay" id="modal-confirm" style="z-index: 600;">
+  <div class="modal" style="max-width: 340px; border-radius: 16px; padding: 20px; text-align: center; margin: auto;">
+    <h3 id="confirm-title" style="margin-bottom: 10px; color: var(--ocean);">Attenzione</h3>
+    <p id="confirm-text" style="color: var(--mist); margin-bottom: 20px; font-size: 14px; line-height: 1.4;"></p>
+    <div style="display: flex; gap: 10px; justify-content: center;">
+      <button class="btn btn-ghost" id="confirm-btn-cancel" style="flex: 1;">Annulla</button>
+      <button class="btn btn-danger" id="confirm-btn-ok" style="flex: 1;">Conferma</button>
+    </div>
+  </div>
+</div>
+
 <script>
-// ════════════════════════════════════════
-//  COSTANTI
-// ════════════════════════════════════════
 const IDR = 20062;
 const LOC_FLAGS = {"MXP":"🇮🇹","JAKARTA":"🏙️","YOGYAKARTA":"🏛️","UBUD":"🌿","GILI T.":"🏝️","LABUAN BAJO":"🦎"};
 const LOC_CLASS = {"MXP":"c-MXP","JAKARTA":"c-JAKARTA","YOGYAKARTA":"c-YOGYAKARTA","UBUD":"c-UBUD","GILI T.":"c-GILIT","LABUAN BAJO":"c-LABUANBAJO"};
 const TIPO_ICON = {"Volo":"✈️","Traghetto":"⛵","Tour":"🧭","Taxi/Auto":"🚗","Bus":"🚌","Altro":"🔀"};
 const LOCAL_KEY = 'indonesia2026';
 
-// ════════════════════════════════════════
-//  STATE
-// ════════════════════════════════════════
+function toggleMenu() {
+  document.getElementById('main-nav').classList.toggle('open');
+}
+
+// Funzione globale per espandere/comprimere le tappe dell'itinerario
+function toggleTl(id) {
+  var el = document.getElementById(id);
+  if (el) {
+    el.classList.toggle('expanded');
+  }
+}
+
 var state = {
   days: [
     {id:"d01",data:"2026-08-08",giorno:1,localita:"MXP",note:""},
@@ -470,21 +519,6 @@ var state = {
   travelNotes: ""
 };
 
-// ════════════════════════════════════════
-//  FIREBASE CONFIG
-// ════════════════════════════════════════
-var FB_CONFIG = {
-  apiKey:            "AIzaSyALyvupZcBogh5KGATUQur4AeCrpZtzDLo",
-  authDomain:        "casa-mare-c974a.firebaseapp.com",
-  projectId:         "casa-mare-c974a",
-  storageBucket:     "casa-mare-c974a.firebasestorage.app",
-  messagingSenderId: "596357064782",
-  appId:             "1:596357064782:web:d86b0f1d57b7ea5989fb1f"
-};
-
-var FB_COLLECTION = 'viaggio_indonesia';
-var FB_DOC_ID     = 'ubFtyoGDYrfMUQ9fHcrq';
-
 var db = null;
 var fbReady = false;
 
@@ -504,9 +538,6 @@ function initFirebase() {
   }
 }
 
-// ════════════════════════════════════════
-//  STORAGE  (localStorage + Firestore)
-// ════════════════════════════════════════
 function saveLS() {
   try {
     localStorage.setItem(LOCAL_KEY, JSON.stringify({
@@ -536,7 +567,7 @@ function saveFirestore(showFeedback) {
   if (!fbReady || !db) {
     var ok = saveLS();
     setStatus(ok ? '💾 Salvato in locale' : '❌ Errore', ok ? 'var(--java)' : 'var(--coral)');
-    if (showFeedback) alert(ok ? '✅ Salvato localmente!' : '❌ Errore.');
+    if (showFeedback) showToast(ok ? '✅ Salvato localmente!' : '❌ Errore.', 'warn');
     return;
   }
   saveLS(); 
@@ -549,7 +580,7 @@ function saveFirestore(showFeedback) {
   db.collection(FB_COLLECTION).doc(FB_DOC_ID).set(data, {merge: true})
     .then(function() {
       setStatus('☁️ Salvato su Cloud', 'var(--java)');
-      if (showFeedback) alert('✅ Salvato su Cloud!');
+      if (showFeedback) showToast('✅ Salvato su Cloud!', 'success');
     })
     .catch(function(e) {
       console.error('Firestore save error:', e);
@@ -561,7 +592,6 @@ function loadFirestore(showFeedback, forceServerFetch) {
   if (!fbReady || !db) return;
   setStatus('⏳ Sync in corso…', 'var(--mist)');
   
-  // Se l'utente clicca il tasto refresh, forziamo il fetch dal server per evitare la cache del browser/dispositivo
   var options = forceServerFetch ? { source: 'server' } : {};
 
   db.collection(FB_COLLECTION).doc(FB_DOC_ID).get(options)
@@ -576,12 +606,11 @@ function loadFirestore(showFeedback, forceServerFetch) {
         saveLS();
         setStatus('☁️ Dati Cloud Aggiornati', 'var(--ocean)');
         
-        // Ricarichiamo la UI della tab attualmente attiva
         var activeTab = document.querySelector('.tab.active').id.replace('tab-', '');
         var refreshFn = {dashboard:renderDashboard, itinerario:renderItinerary, trasferimenti:renderTransfers, alloggi:renderHotels, costi:renderCosts, note:renderNotes, mappa:renderMappa};
         if(refreshFn[activeTab]) refreshFn[activeTab]();
 
-        if (showFeedback) alert('✅ Dati scaricati dal Cloud con successo!');
+        if (showFeedback) showToast('✅ Dati scaricati dal Cloud con successo!', 'success');
       } else {
         saveFirestore(false);
       }
@@ -589,7 +618,7 @@ function loadFirestore(showFeedback, forceServerFetch) {
     .catch(function(e) {
       console.warn('Firestore load error:', e);
       setStatus('⚠️ Offline/Errore Sync', 'var(--turmeric)');
-      if (showFeedback) alert('⚠️ Impossibile scaricare dal Cloud. Controlla la connessione o le regole Firebase.');
+      if (showFeedback) showToast('⚠️ Errore di connessione a Firebase.', 'error');
     });
 }
 
@@ -607,9 +636,55 @@ function setStatus(msg, color) {
   if (el) { el.textContent = msg; el.style.color = color || 'var(--mist)'; }
 }
 
-// ════════════════════════════════════════
-//  HELPERS
-// ════════════════════════════════════════
+function showToast(msg, type) {
+  var container = document.getElementById('notification-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'notification-container';
+    container.style.position = 'fixed';
+    container.style.bottom = '20px';
+    container.style.left = '50%';
+    container.style.transform = 'translateX(-50%)';
+    container.style.zIndex = '9999';
+    container.style.display = 'flex';
+    container.style.flexDirection = 'column';
+    container.style.gap = '8px';
+    document.body.appendChild(container);
+  }
+  var toast = document.createElement('div');
+  toast.style.background = type === 'error' ? 'var(--coral)' : type === 'warn' ? 'var(--turmeric)' : 'var(--ocean)';
+  toast.style.color = '#fff';
+  toast.style.padding = '12px 20px';
+  toast.style.borderRadius = '8px';
+  toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+  toast.style.fontSize = '14px';
+  toast.style.fontWeight = '600';
+  toast.style.minWidth = '280px';
+  toast.style.textAlign = 'center';
+  toast.style.animation = 'fadeInToast 0.3s ease, fadeOutToast 0.3s ease 2.7s forwards';
+  toast.textContent = msg;
+  
+  container.appendChild(toast);
+  setTimeout(function() {
+    toast.remove();
+  }, 3000);
+}
+
+var _confirmCallback = null;
+function askConfirm(title, text, onConfirm) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-text').textContent = text;
+  _confirmCallback = onConfirm;
+  document.getElementById('modal-confirm').classList.add('open');
+}
+document.getElementById('confirm-btn-cancel').onclick = function() {
+  document.getElementById('modal-confirm').classList.remove('open');
+};
+document.getElementById('confirm-btn-ok').onclick = function() {
+  document.getElementById('modal-confirm').classList.remove('open');
+  if (_confirmCallback) _confirmCallback();
+};
+
 function uid() { return 'id' + Date.now() + Math.random().toString(36).slice(2,6); }
 function fmtD(s, short) {
   if (!s) return '—';
@@ -662,9 +737,6 @@ function alertsHTML(issues) {
   }).join('');
 }
 
-// ════════════════════════════════════════
-//  NAVIGAZIONE TAB E MENU MOBILE
-// ════════════════════════════════════════
 function toggleMenu() {
   document.getElementById('main-nav').classList.toggle('open');
 }
@@ -675,7 +747,6 @@ function goTab(name, btn) {
   document.getElementById('tab-' + name).classList.add('active');
   if (btn) btn.classList.add('active');
   
-  // Chiudi menu su mobile dopo il click
   document.getElementById('main-nav').classList.remove('open');
   
   var fn = {dashboard:renderDashboard, itinerario:renderItinerary,
@@ -683,9 +754,6 @@ function goTab(name, btn) {
   if (fn[name]) fn[name]();
 }
 
-// ════════════════════════════════════════
-//  DASHBOARD
-// ════════════════════════════════════════
 function renderDashboard() {
   var diff = Math.ceil((new Date('2026-08-08') - new Date()) / 86400000);
   document.getElementById('hdr-countdown').textContent = diff > 0 ? diff : (diff === 0 ? 'OGGI 🎉' : 'Partiti!');
@@ -751,6 +819,8 @@ function openDayInItinerary(idx) {
   goTab('itinerario', document.querySelector('nav button:nth-child(2)'));
   document.getElementById('it-search').value = '';
   document.getElementById('it-dest').value = '';
+  document.getElementById('it-type').value = '';
+  document.getElementById('it-pay').value = '';
   renderItinerary();
   setTimeout(function() {
     var card = document.getElementById('tlc-' + idx);
@@ -778,7 +848,6 @@ function renderDestCards() {
   Object.values(rows).forEach(function(r) {
     var sorted = r.days.sort();
     var alloggi = r.hotels.map(function(h) { return h.nome; }).join(', ') || '<span style="color:var(--coral)">⚠️ Mancante</span>';
-    var pagato = r.hotels.length ? (r.hotels.every(function(h) { return h.pagato==='SI'; }) ? 'SI' : r.hotels.some(function(h) { return h.pagato==='SI'; }) ? 'PARZ' : 'NO') : null;
     html += '<div class="card">' +
       '<div class="dr"><span class="dk">Metà</span><span class="dv">' + (LOC_FLAGS[r.loc]||'') + ' <strong>' + r.loc + '</strong></span></div>' +
       '<div class="dr"><span class="dk">Arrivo</span><span class="dv">' + fmtD(sorted[0],true) + '</span></div>' +
@@ -789,15 +858,14 @@ function renderDestCards() {
   document.getElementById('db-dest').innerHTML = html;
 }
 
-// ════════════════════════════════════════
-//  ITINERARIO
-// ════════════════════════════════════════
 function renderItinerary() {
   var search = (document.getElementById('it-search').value || '').toLowerCase();
   var fDest = document.getElementById('it-dest').value;
+  var fType = document.getElementById('it-type').value;
+  var fPay = document.getElementById('it-pay').value;
   var issues = runChecks();
 
-  var dests = [...new Set(state.days.map(function(d) { return d.localita; }))];
+  var dests = [...new Set(state.days.map(function(d) { return d.localita; }))].filter(Boolean);
   var sel = document.getElementById('it-dest');
   if (sel.options.length <= 1) {
     dests.forEach(function(d) {
@@ -812,13 +880,35 @@ function renderItinerary() {
 
   state.days.forEach(function(day, idx) {
     var loc = day.localita || '';
-    if (fDest && loc !== fDest) return;
-    if (search && !loc.toLowerCase().includes(search) &&
-        !hotelsForDate(day.data).some(function(h) { return h.nome.toLowerCase().includes(search); }) &&
-        !transfersForDate(day.data).some(function(t) { return (t.nome+t.note).toLowerCase().includes(search); })) return;
-
     var hs = hotelsForDate(day.data);
     var ts = transfersForDate(day.data);
+
+    if (fDest && loc !== fDest) return;
+
+    if (fType) {
+      if (fType === 'hotel' && hs.length === 0) return;
+      if (fType === 'volo' && !ts.some(function(t) { return t.tipo === 'Volo'; })) return;
+      if (fType === 'traghetto' && !ts.some(function(t) { return t.tipo === 'Traghetto'; })) return;
+    }
+
+    if (fPay) {
+      var hasMatchingPay = false;
+      if (hs.some(function(h) { return (h.pagato || 'NO') === fPay; })) {
+        hasMatchingPay = true;
+      }
+      if (ts.some(function(t) { return t.costo && (t.pagato || 'NO') === fPay; })) {
+        hasMatchingPay = true;
+      }
+      if (!hasMatchingPay) return;
+    }
+
+    if (search) {
+      var matchesText = loc.toLowerCase().includes(search) ||
+        hs.some(function(h) { return h.nome.toLowerCase().includes(search) || (h.note || '').toLowerCase().includes(search); }) ||
+        ts.some(function(t) { return (t.nome || '').toLowerCase().includes(search) || (t.note || '').toLowerCase().includes(search) || (t.da || '').toLowerCase().includes(search) || (t.a || '').toLowerCase().includes(search); });
+      if (!matchesText) return;
+    }
+
     var dayIssues = issues.filter(function(i) { return i.msg.includes('Giorno ' + day.giorno) || i.msg.includes(fmtD(day.data,true)); });
 
     var nodeCls = 'tl-node';
@@ -830,8 +920,8 @@ function renderItinerary() {
     var chips = '';
     ts.forEach(function(t) { chips += tipChip(t.tipo); });
     if (hs.length) chips += '<span class="chip chip-hotel">🏨 ' + hs[0].nome.substring(0,16) + (hs[0].nome.length>16?'…':'') + '</span>';
+    if (dayIssues.length) chips += '<span class="tl-warn-dot">⚠️ ' + dayIssues.length + '</span>';
 
-    // Transfer panel
     var tPanel = '';
     if (ts.length) {
       tPanel = ts.map(function(t) {
@@ -839,13 +929,15 @@ function renderItinerary() {
           '<div class="dr"><span class="dk">Vettore</span><span class="dv">' + (t.nome||'—') + '</span></div>' +
           '<div class="dr"><span class="dk">Tratta</span><span class="dv" style="font-size:12px">' + (t.da||'—') + ' → ' + (t.a||'—') + '</span></div>' +
           '<div class="dr"><span class="dk">Orari</span><span class="dv">' + (t.oraP||'?') + ' → ' + (t.oraA||'?') + '</span></div>' +
+          '<div class="dr"><span class="dk">Costo</span><span class="dv">' + (t.costo ? '€' + t.costo : '—') + '</span></div>' +
+          '<div class="dr"><span class="dk">Pagato</span><span class="dv">' + paidBadge(t.pagato) + '</span></div>' +
+          (t.note ? '<div class="dr"><span class="dk">Note</span><span class="dv" style="font-size:12px">' + t.note + '</span></div>' : '') +
           '<div style="text-align:right;margin-top:8px"><button class="btn btn-ghost btn-sm" onclick="openEditTransfer(\'' + t.id + '\')">✏️ Modifica</button></div>';
       }).join('<hr style="border:none;border-top:1px dashed var(--border);margin:10px 0">');
     } else {
       tPanel = '<p style="color:var(--mist);font-size:13px">Nessun trasferimento. <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="openAddTransferDate(\'' + day.data + '\')">+ Aggiungi</button></p>';
     }
 
-    // Hotel panel
     var hPanel = '';
     if (hs.length) {
       hPanel = hs.map(function(h) {
@@ -853,13 +945,19 @@ function renderItinerary() {
         var badge = isCI ? '<span style="color:var(--java)">▶ Check-in</span>' : isCO ? '<span style="color:var(--coral)">◀ Check-out</span>' : 'In corso';
         return '<div class="dr"><span class="dk">Struttura</span><span class="dv" style="font-size:12px">' + h.nome + '</span></div>' +
           '<div class="dr"><span class="dk">Stato</span><span class="dv">' + badge + '</span></div>' +
+          '<div class="dr"><span class="dk">Notti</span><span class="dv">' + nights(h.cin,h.cout) + '</span></div>' +
+          '<div class="dr"><span class="dk">Costo</span><span class="dv">€' + (h.costoEUR ? h.costoEUR.toFixed(2) : '—') + '</span></div>' +
+          '<div class="dr"><span class="dk">Pagato</span><span class="dv">' + paidBadge(h.pagato) + '</span></div>' +
+          (h.ref ? '<div class="dr"><span class="dk">Rif.</span><span class="dv"><code>' + h.ref + '</code></span></div>' : '') +
+          '<div class="dr"><span class="dk">Link</span><span class="dv">' + (h.url ? '<a href="' + h.url + '" target="_blank" style="color:var(--lagoon);font-weight:700;font-size:12px">Booking ↗</a>' : '<span style="color:var(--mist);font-size:12px;font-style:italic">—</span>') + '</span></div>' +
+          (h.note ? '<div class="dr"><span class="dk">Note</span><span class="dv" style="font-size:12px">' + h.note + '</span></div>' : '') +
           '<div style="text-align:right;margin-top:8px"><button class="btn btn-ghost btn-sm" onclick="openEditHotel(\'' + h.id + '\')">✏️ Modifica</button></div>';
       }).join('<hr style="border:none;border-top:1px dashed var(--border);margin:10px 0">');
     } else {
       var isOut = state.hotels.some(function(h) { return h.cout === day.data; });
       hPanel = isOut ? '<p style="color:var(--mist);font-size:13px">Giorno di check-out.</p>' :
         loc === 'MXP' ? '<p style="color:var(--mist);font-size:13px">Partenza dall\'Italia.</p>' :
-        '<p style="color:var(--coral);font-size:13px;font-weight:700">⚠️ Nessun alloggio.</p>';
+        '<p style="color:var(--coral);font-size:13px;font-weight:700">⚠️ Nessun alloggio.<br><button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="openAddHotelDate(\'' + day.data + '\')">+ Alloggio</button></p>';
     }
 
     html += '<div class="tl-day">' +
@@ -867,9 +965,10 @@ function renderItinerary() {
       '<div class="tl-card" id="tlc-' + idx + '">' +
         '<div class="tl-head" onclick="toggleTl(\'tlc-' + idx + '\')">' +
           '<span class="tl-dn">G' + day.giorno + '</span>' +
+          '<span class="tl-date">' + fmtD(day.data,true) + '</span>' +
           '<span class="tl-loc">' + (LOC_FLAGS[loc]||'') + ' ' + (loc||'—') + '</span>' +
           '<div class="tl-chips">' + chips + '</div>' +
-          '<span style="color:var(--mist);margin-left:auto;font-size:16px">▾</span>' +
+          '<span style="color:var(--mist);margin-left:auto;font-size:14px">▾</span>' +
         '</div>' +
         '<div class="tl-body">' +
           '<div class="tl-panel"><h4>✈️ Trasferimenti</h4>' + tPanel + '</div>' +
@@ -878,14 +977,9 @@ function renderItinerary() {
       '</div></div>';
   });
 
-  cont.innerHTML = html || '<div class="empty"><div class="big">🔍</div><p>Nessun risultato.</p></div>';
+  cont.innerHTML = html || '<div class="empty"><div class="big">🔍</div><p>Nessun risultato corrisponde ai filtri impostati.</p></div>';
 }
 
-function toggleTl(id) { document.getElementById(id).classList.toggle('expanded'); }
-
-// ════════════════════════════════════════
-//  TRASFERIMENTI, ALLOGGI, COSTI (Rimangono pressoché identici)
-// ════════════════════════════════════════
 function renderTransfers() {
   var sorted = state.transfers.slice().sort(function(a,b) { return cmp(a.data,b.data); });
   var html = sorted.map(function(t) {
@@ -951,9 +1045,6 @@ function renderCosts() {
   document.getElementById('co-list').innerHTML = html;
 }
 
-// ════════════════════════════════════════
-//  NOTE
-// ════════════════════════════════════════
 function renderNotes() {
   document.getElementById('nt-area').value = state.travelNotes || '';
   var unpaidH = state.hotels.filter(function(h) { return h.pagato !== 'SI'; });
@@ -974,25 +1065,27 @@ function renderNotes() {
 
 function handleNotesInput() {
   state.travelNotes = document.getElementById('nt-area').value;
-  autoSave(); // Modificato in alto per debouncing
+  autoSave();
 }
 
-// CRUD
 function deleteTransfer(id) {
-  if (!confirm('Rimuovere questo trasferimento?')) return;
-  state.transfers = state.transfers.filter(function(t) { return t.id !== id; });
-  renderTransfers(); autoSave();
+  askConfirm('Rimuovere trasferimento?', 'Sei sicuro di voler cancellare questo trasferimento?', function() {
+    state.transfers = state.transfers.filter(function(t) { return t.id !== id; });
+    renderTransfers(); 
+    autoSave();
+    showToast('Trasferimento eliminato con successo', 'success');
+  });
 }
+
 function deleteHotel(id) {
-  if (!confirm('Rimuovere questo alloggio?')) return;
-  state.hotels = state.hotels.filter(function(h) { return h.id !== id; });
-  renderHotels(); autoSave();
+  askConfirm('Rimuovere alloggio?', 'Sei sicuro di voler cancellare questo alloggio?', function() {
+    state.hotels = state.hotels.filter(function(h) { return h.id !== id; });
+    renderHotels(); 
+    autoSave();
+    showToast('Alloggio eliminato con successo', 'success');
+  });
 }
 
-
-// ════════════════════════════════════════
-//  MODALI
-// ════════════════════════════════════════
 var _editTransferId = null;
 function openAddTransfer() { openAddTransferDate(''); }
 function openAddTransferDate(date) {
@@ -1005,6 +1098,7 @@ function openAddTransferDate(date) {
   document.getElementById('mt-pagato').value = '';
   document.getElementById('modal-transfer').classList.add('open');
 }
+
 function openEditTransfer(id) {
   var t = state.transfers.find(function(x) { return x.id===id; });
   if (!t) return;
@@ -1023,6 +1117,7 @@ function openEditTransfer(id) {
   document.getElementById('mt-note').value = t.note||'';
   document.getElementById('modal-transfer').classList.add('open');
 }
+
 function saveTransfer() {
   var obj = {
     id: _editTransferId || uid(),
@@ -1038,6 +1133,10 @@ function saveTransfer() {
     ref: document.getElementById('mt-ref').value,
     note: document.getElementById('mt-note').value
   };
+  if (!obj.data) {
+    showToast('⚠️ Per favore inserisci una data.', 'warn');
+    return;
+  }
   if (_editTransferId) {
     var i = state.transfers.findIndex(function(x) { return x.id===_editTransferId; });
     if (i>=0) state.transfers[i] = obj;
@@ -1059,6 +1158,7 @@ function openAddHotelDate(date) {
   if (date) document.getElementById('mh-dest').value = locForDate(date);
   document.getElementById('modal-hotel').classList.add('open');
 }
+
 function openEditHotel(id) {
   var h = state.hotels.find(function(x) { return x.id===id; });
   if (!h) return;
@@ -1075,6 +1175,7 @@ function openEditHotel(id) {
   document.getElementById('mh-note').value = h.note||'';
   document.getElementById('modal-hotel').classList.add('open');
 }
+
 function saveHotel() {
   var obj = {
     id: _editHotelId || uid(),
@@ -1088,8 +1189,14 @@ function saveHotel() {
     url: document.getElementById('mh-url').value,
     note: document.getElementById('mh-note').value
   };
-  if (!obj.nome||!obj.cin||!obj.cout) { alert('Compila almeno: nome, check-in, check-out.'); return; }
-  if (obj.cout <= obj.cin) { alert('Check-out deve essere successivo al check-in.'); return; }
+  if (!obj.nome||!obj.cin||!obj.cout) { 
+    showToast('⚠️ Compila nome, check-in e check-out.', 'warn'); 
+    return; 
+  }
+  if (obj.cout <= obj.cin) { 
+    showToast('⚠️ Il check-out deve essere successivo al check-in.', 'error'); 
+    return; 
+  }
   if (_editHotelId) {
     var i = state.hotels.findIndex(function(x) { return x.id===_editHotelId; });
     if (i>=0) state.hotels[i] = obj;
@@ -1097,13 +1204,37 @@ function saveHotel() {
   closeModal('modal-hotel'); renderHotels(); autoSave();
 }
 
+function openAddDayModal() {
+  document.getElementById('ad-data').value = '';
+  document.getElementById('ad-dest').value = '';
+  document.getElementById('modal-add-day').classList.add('open');
+}
+
+function saveAddDay() {
+  var date = document.getElementById('ad-data').value;
+  var loc = document.getElementById('ad-dest').value;
+  if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    showToast('⚠️ Data non valida.', 'error');
+    return;
+  }
+  if (state.days.find(function(d) { return d.data===date; })) {
+    showToast('⚠️ Questo giorno è già presente in itinerario.', 'warn');
+    return;
+  }
+  state.days.push({id:uid(), data:date, giorno:state.days.length+1, localita:loc.toUpperCase().trim(), note:''});
+  state.days.sort(function(a,b) { return cmp(a.data,b.data); });
+  state.days.forEach(function(d,i) { d.giorno = i+1; });
+  closeModal('modal-add-day');
+  renderItinerary();
+  autoSave();
+  showToast('Giorno aggiunto con successo!', 'success');
+}
+
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(function(m) {
   m.addEventListener('click', function(e) { if (e.target===m) m.classList.remove('open'); });
 });
 
-
-// MAPPA e resto del codice rimangono invariati per brevità
 var _map = null;
 var TAPPE = [
   { id: 'JAKARTA',     nome: 'Jakarta',           lat: -6.2088,  lng: 106.8456, giorni: 3,  colore: '#0e7da3', icon: '🏙️' },
@@ -1159,6 +1290,41 @@ function geodesicPoints(from, to, n) {
   for (var i = 0; i <= n; i++) {
     var f = i / n; pts.push([from[0] + (to[0] - from[0]) * f, from[1] + (to[1] - from[1]) * f]);
   } return pts;
+}
+
+function importExcel(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var wb = XLSX.read(e.target.result, {type:'array',cellDates:true});
+      var ws = wb.Sheets[wb.SheetNames[0]];
+      var rows = XLSX.utils.sheet_to_json(ws, {header:1,raw:false,dateNF:'yyyy-mm-dd'});
+      rows.forEach(function(r) {
+        if (!r[0] || !r[1]) return;
+        var dateStr = typeof r[0]==='string' && r[0].includes('-') ? r[0].substring(0,10) : (r[0] instanceof Date ? r[0].toISOString().substring(0,10) : null);
+        if (!dateStr) return;
+        if (r[2] && typeof r[2]==='string') { var d = state.days.find(function(d) { return d.data===dateStr; }); if (d) d.localita = r[2].trim().toUpperCase(); }
+      });
+      showToast('✅ Itinerario importato con successo!', 'success');
+      renderDashboard(); autoSave(); input.value='';
+    } catch(err) { showToast('Errore di importazione: ' + err.message, 'error'); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function exportExcel() {
+  var wb = XLSX.utils.book_new();
+  var head = ['Data','Giorno','Destinazione','Alloggio','Check-in','Check-out','Notti','Costo Hotel €','Pagato Hotel','Ref. Hotel','Tipo Transfer','Vettore','Da','A','Ora P.','Ora A.','Costo Transfer €','Pagato Transfer','Note Transfer'];
+  var rows = [head];
+  state.days.forEach(function(d) {
+    var hs = hotelsForDate(d.data); var ts = transfersForDate(d.data);
+    var h=hs[0], t=ts[0];
+    rows.push([d.data,d.giorno,d.localita,h?h.nome:'',h?h.cin:'',h?h.cout:'',h?nights(h.cin,h.cout):'',h?h.costoEUR:'',h?h.pagato:'',h?h.ref:'',t?t.tipo:'',t?t.nome:'',t?t.da:'',t?t.a:'',t?t.oraP:'',t?t.oraA:'',t?t.costo:'',t?t.pagato:'',t?t.note:'']);
+  });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), 'Itinerario');
+  XLSX.writeFile(wb, 'Indonesia_2026_' + new Date().toISOString().slice(0,10) + '.xlsx');
 }
 
 document.addEventListener('DOMContentLoaded', function() {
