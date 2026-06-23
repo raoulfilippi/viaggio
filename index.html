@@ -75,7 +75,7 @@ input[type=file]{display:none;}
 .btn-primary{background:var(--ocean);color:#fff;}
 .btn-accent{background:var(--turmeric);color:#fff;}
 .btn-green{background:var(--java);color:#fff;}
-.btn-ghost{background:transparent;color:var(--ocean);border:1.5px solid var(--ocean);}
+.btn-ghost{background:transparent;color:var(--ocean);border:1.5px solid var(--border);}
 .btn-danger{background:var(--coral);color:#fff;}
 .btn-sm{padding:7px 12px;font-size:12px;}
 
@@ -163,6 +163,49 @@ select{cursor:pointer;}
 .leg{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mist);}
 .leg-sw{width:10px;height:10px;border-radius:2px;border:1px solid rgba(0,0,0,0.1);}
 
+.filter-container {
+  position: relative;
+  display: inline-block;
+}
+.filter-dropdown {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: 4px;
+  min-width: 200px;
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  padding: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 500;
+}
+.filter-dropdown.hidden {
+  display: none !important;
+}
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  transition: background 0.2s;
+}
+.filter-item:hover {
+  background: #f0f4f8;
+}
+.filter-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
 .chip{display:inline-flex;align-items:center;gap:4px;padding:3px 6px;border-radius:20px;font-size:10px;font-weight:600;}
 .chip-fly{background:#def0fa;color:var(--ocean);}
 .chip-ferry{background:#fef0d8;color:#8b5a00;}
@@ -189,7 +232,7 @@ select{cursor:pointer;}
 .empty{text-align:center;padding:32px 20px;color:var(--mist);}
 .empty .big{font-size:40px;margin-bottom:10px;}
 code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-family:monospace;color:var(--ocean); word-break:break-all;}
-.status-bar{font-size:12px;font-weight:600;color:var(--mist);padding:6px 0 0;text-align:center; width:100%;}
+.status-bar{font-size:11px;font-weight:600;color:rgba(255,255,255,0.85);margin-top:2px;text-align:right;}
 
 @media(min-width:640px){
   .menu-btn { display: none; }
@@ -224,6 +267,7 @@ code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-fa
     <div class="hdr-right">
       <strong id="hdr-countdown">—</strong>
       giorni alla partenza
+      <div id="last-saved" class="status-bar">⏳ Sincronizzazione in corso...</div>
     </div>
     <button class="menu-btn" onclick="toggleMenu()">☰</button>
   </div>
@@ -242,22 +286,17 @@ code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-fa
 
 <!-- DASHBOARD -->
 <div id="tab-dashboard" class="tab active">
-  <div class="toolbar">
-    <button class="btn btn-primary btn-sm" onclick="document.getElementById('fi').click()">📂 Importa</button>
-    <input type="file" id="fi" accept=".xlsx,.xls" onchange="importExcel(this)">
-    <button class="btn btn-accent btn-sm" onclick="exportExcel()">⬇️ Esporta</button>
-    <div class="spacer"></div>
-    <button class="btn btn-green btn-sm" onclick="manualSave()">☁️ Salva</button>
-    <button class="btn btn-ghost btn-sm" onclick="loadFirestore(true, true)">🔄</button>
-    <div class="status-bar" id="last-saved">💾 Pronto</div>
-  </div>
-  <div class="kpi-row" id="db-kpi"></div>
-  <div class="alerts" id="db-alerts"></div>
-  <div class="sh"><h2>📆 Agosto 2026</h2></div>
+  <!-- Calendario per primo, in assoluto! -->
+  <div class="sh" style="margin-top:0;"><h2>📆 Agosto 2026</h2></div>
   <div class="cal-wrap">
     <div class="cal-legend" id="cal-legend"></div>
     <div class="cal-grid" id="cal-grid"></div>
   </div>
+
+  <!-- Aree riassuntive posizionate sotto al calendario -->
+  <div class="kpi-row" id="db-kpi"></div>
+  <div class="alerts" id="db-alerts"></div>
+  
   <div class="sh"><h2>📍 Destinazioni</h2></div>
   <div class="card-list" id="db-dest"></div>
 </div>
@@ -266,21 +305,32 @@ code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-fa
 <div id="tab-itinerario" class="tab">
   <div class="toolbar" style="gap: 8px;">
     <input type="text" id="it-search" placeholder="🔍 Cerca…" style="flex:1; min-width:140px; font-size:14px;" oninput="renderItinerary()">
-    <select id="it-dest" onchange="renderItinerary()" style="max-width: 150px; font-size: 14px;">
-      <option value="">Mete (Tutte)</option>
-    </select>
-    <select id="it-type" onchange="renderItinerary()" style="max-width: 150px; font-size: 14px;">
-      <option value="">Tutti i tipi</option>
-      <option value="volo">✈️ Solo Voli</option>
-      <option value="traghetto">⛵ Solo Traghetti</option>
-      <option value="hotel">🏨 Solo Alloggi</option>
-    </select>
-    <select id="it-pay" onchange="renderItinerary()" style="max-width: 150px; font-size: 14px;">
-      <option value="">Tutti i pagamenti</option>
-      <option value="SI">✓ Pagato</option>
-      <option value="PARZ">◑ Parziale</option>
-      <option value="NO">✗ Non pagato</option>
-    </select>
+    
+    <!-- Filtro Mete Multi-Selezione -->
+    <div class="filter-container" style="min-width: 145px; max-width: 180px; flex: 1;">
+      <button class="btn btn-ghost" onclick="toggleDropdown(event, 'drop-dest')" style="font-size: 13px; padding: 10px; border: 1.5px solid var(--border); border-radius: 8px; width: 100%; display: flex; justify-content: space-between; align-items: center;">
+        <span id="lbl-dest" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Mete (Tutte)</span> <span style="font-size:9px; margin-left: auto; padding-left: 6px;">▼</span>
+      </button>
+      <div id="drop-dest" class="filter-dropdown hidden"></div>
+    </div>
+
+    <!-- Filtro Tipo Multi-Selezione -->
+    <div class="filter-container" style="min-width: 145px; max-width: 180px; flex: 1;">
+      <button class="btn btn-ghost" onclick="toggleDropdown(event, 'drop-types')" style="font-size: 13px; padding: 10px; border: 1.5px solid var(--border); border-radius: 8px; width: 100%; display: flex; justify-content: space-between; align-items: center;">
+        <span id="lbl-types" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Tutti i tipi</span> <span style="font-size:9px; margin-left: auto; padding-left: 6px;">▼</span>
+      </button>
+      <div id="drop-types" class="filter-dropdown hidden"></div>
+    </div>
+
+    <!-- Filtro Pagamenti Multi-Selezione -->
+    <div class="filter-container" style="min-width: 145px; max-width: 180px; flex: 1;">
+      <button class="btn btn-ghost" onclick="toggleDropdown(event, 'drop-pay')" style="font-size: 13px; padding: 10px; border: 1.5px solid var(--border); border-radius: 8px; width: 100%; display: flex; justify-content: space-between; align-items: center;">
+        <span id="lbl-pay" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Tutti i pagamenti</span> <span style="font-size:9px; margin-left: auto; padding-left: 6px;">▼</span>
+      </button>
+      <div id="drop-pay" class="filter-dropdown hidden"></div>
+    </div>
+
+    <button class="btn btn-accent btn-sm" onclick="exportExcelItinerary()">⬇️ Esporta</button>
     <button class="btn btn-primary btn-sm" onclick="openAddDayModal()">+ Giorno</button>
   </div>
   <div class="timeline" id="tl-cont"></div>
@@ -290,8 +340,6 @@ code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-fa
 <div id="tab-trasferimenti" class="tab">
   <div class="toolbar">
     <button class="btn btn-primary btn-sm" onclick="openAddTransfer()">+ Transfer</button>
-    <div class="spacer"></div>
-    <button class="btn btn-accent btn-sm" onclick="exportExcel()">⬇️ Esporta</button>
   </div>
   <div class="alerts" id="tr-alerts"></div>
   <div class="card-list" id="tr-list"></div>
@@ -301,8 +349,6 @@ code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-fa
 <div id="tab-alloggi" class="tab">
   <div class="toolbar">
     <button class="btn btn-primary btn-sm" onclick="openAddHotel()">+ Alloggio</button>
-    <div class="spacer"></div>
-    <button class="btn btn-accent btn-sm" onclick="exportExcel()">⬇️ Esporta</button>
   </div>
   <div class="alerts" id="ho-alerts"></div>
   <div class="card-list" id="ho-list"></div>
@@ -438,7 +484,6 @@ const IDR = 20062;
 const LOC_FLAGS = {"MXP":"🇮🇹","JAKARTA":"🏙️","YOGYAKARTA":"🏛️","UBUD":"🌿","GILI T.":"🏝️","LABUAN BAJO":"🦎"};
 const LOC_CLASS = {"MXP":"c-MXP","JAKARTA":"c-JAKARTA","YOGYAKARTA":"c-YOGYAKARTA","UBUD":"c-UBUD","GILI T.":"c-GILIT","LABUAN BAJO":"c-LABUANBAJO"};
 const TIPO_ICON = {"Volo":"✈️","Traghetto":"⛵","Tour":"🧭","Taxi/Auto":"🚗","Bus":"🚌","Altro":"🔀"};
-const LOCAL_KEY = 'indonesia2026';
 
 const FB_CONFIG = {
   apiKey:            "AIzaSyALyvupZcBogh5KGATUQur4AeCrpZtzDLo",
@@ -501,6 +546,13 @@ var state = {
   travelNotes: ""
 };
 
+// Stato dei filtri multi-selezione
+var filterState = {
+  destinations: [],
+  types: [],
+  payments: []
+};
+
 var db = null;
 var fbReady = false;
 
@@ -557,68 +609,145 @@ function initFirebase() {
     firebase.auth().signInAnonymously().then(function() {
       fbReady = true;
       console.info('Firebase pronto ✓');
+      setStatus('☁️ DB attivo', 'var(--java)');
       loadFirestore(false, false);
     }).catch(function(e) {
       console.warn('Firebase auth error:', e);
+      setStatus('⚠️ Errore DB', 'var(--coral)');
     });
   } catch(e) {
     console.warn('Firebase init error:', e);
+    setStatus('⚠️ Errore DB', 'var(--coral)');
   }
 }
 
-function saveLS() {
-  try {
-    localStorage.setItem(LOCAL_KEY, JSON.stringify({
-      days: state.days, transfers: state.transfers,
-      hotels: state.hotels, extraCosts: state.extraCosts,
-      travelNotes: state.travelNotes, ts: new Date().toISOString()
-    }));
-    return true;
-  } catch(e) { return false; }
+function toFirestore(stateData) {
+  return {
+    days: stateData.days.map(function(d) {
+      return {
+        id: d.id,
+        data: d.data,
+        giorno: d.giorno,
+        nome: "Giorno " + d.giorno,
+        localita: d.localita || "",
+        note: d.note || ""
+      };
+    }),
+    transfers: stateData.transfers.map(function(t) {
+      return {
+        id: t.id,
+        data: t.data,
+        tipo: t.tipo || "",
+        vettore: t.nome || "",
+        tratta: (t.da || "") + " → " + (t.a || ""),
+        da: t.da || "",
+        a: t.a || "",
+        orari: (t.oraP || "") + " → " + (t.oraA || ""),
+        oraP: t.oraP || "",
+        oraA: t.oraA || "",
+        costo: t.costo,
+        pagato: t.pagato || "",
+        note: t.note || ""
+      };
+    }),
+    hotels: stateData.hotels.map(function(h) {
+      var n = nights(h.cin, h.cout);
+      var statoStay = "In corso";
+      if (h.pagato === "SI") statoStay = "Pagato";
+      else if (h.pagato === "PARZ") statoStay = "Parziale";
+      else if (h.pagato === "NO") statoStay = "Non pagato";
+
+      return {
+        id: h.id,
+        struttura: h.nome || "",
+        dest: h.dest || "",
+        cin: h.cin || "",
+        cout: h.cout || "",
+        stato: statoStay,
+        notti: n !== "—" ? n : 0,
+        costo: h.costoEUR,
+        pagato: h.pagato || "",
+        rif: h.ref || "",
+        link: h.url || "",
+        note: h.note || ""
+      };
+    }),
+    extraCosts: stateData.extraCosts,
+    travelNotes: stateData.travelNotes || ""
+  };
 }
 
-function loadLS() {
-  try {
-    var raw = localStorage.getItem(LOCAL_KEY);
-    if (!raw) return false;
-    var d = JSON.parse(raw);
-    if (d.days) state.days = d.days;
-    if (d.transfers) state.transfers = d.transfers;
-    if (d.hotels) state.hotels = d.hotels;
-    if (d.extraCosts) state.extraCosts = d.extraCosts;
-    if (d.travelNotes !== undefined) state.travelNotes = d.travelNotes;
-    return d.ts || true;
-  } catch(e) { return false; }
+function fromFirestore(d) {
+  return {
+    days: (d.days || []).map(function(day) {
+      return {
+        id: day.id,
+        data: day.data,
+        giorno: day.giorno,
+        localita: day.localita || "",
+        note: day.note || ""
+      };
+    }),
+    transfers: (d.transfers || []).map(function(t) {
+      return {
+        id: t.id,
+        data: t.data,
+        tipo: t.tipo || "Volo",
+        nome: t.vettore !== undefined ? t.vettore : (t.nome || ""),
+        da: t.da || "",
+        a: t.a || "",
+        oraP: t.oraP || "",
+        oraA: t.oraA || "",
+        costo: t.costo !== undefined ? t.costo : null,
+        pagato: t.pagato || null,
+        ref: t.rif !== undefined ? t.rif : (t.ref || ""),
+        note: t.note || ""
+      };
+    }),
+    hotels: (d.hotels || []).map(function(h) {
+      return {
+        id: h.id,
+        nome: h.struttura !== undefined ? h.struttura : (h.nome || ""),
+        dest: h.dest || "",
+        cin: h.cin || "",
+        cout: h.cout || "",
+        costoEUR: h.costo !== undefined ? h.costo : (h.costoEUR !== undefined ? h.costoEUR : null),
+        pagato: h.pagato || null,
+        ref: h.rif !== undefined ? h.rif : (h.ref || ""),
+        url: h.link !== undefined ? h.link : (h.url || ""),
+        note: h.note || ""
+      };
+    }),
+    extraCosts: d.extraCosts || [],
+    travelNotes: d.travelNotes !== undefined ? d.travelNotes : ""
+  };
 }
 
 function saveFirestore(showFeedback) {
   if (!fbReady || !db) {
-    var ok = saveLS();
-    setStatus(ok ? '💾 Salvato in locale' : '❌ Errore', ok ? 'var(--java)' : 'var(--coral)');
-    if (showFeedback) showToast(ok ? '✅ Salvato localmente!' : '❌ Errore.', 'warn');
+    setStatus('❌ DB non pronto', 'var(--coral)');
+    if (showFeedback) showToast('⚠️ Impossibile salvare: connessione cloud non pronta.', 'error');
     return;
   }
-  saveLS(); 
-  var data = {
-    days: state.days, transfers: state.transfers,
-    hotels: state.hotels, extraCosts: state.extraCosts,
-    travelNotes: state.travelNotes,
-    ultimaModifica: firebase.firestore.FieldValue.serverTimestamp()
-  };
+  
+  var data = toFirestore(state);
+  data.ultimaModifica = firebase.firestore.FieldValue.serverTimestamp();
+  
   db.collection(FB_COLLECTION).doc(FB_DOC_ID).set(data, {merge: true})
     .then(function() {
-      setStatus('☁️ Salvato su Cloud', 'var(--java)');
-      if (showFeedback) showToast('✅ Salvato su Cloud!', 'success');
+      setStatus('☁️ DB attivo', 'var(--java)');
+      if (showFeedback) showToast('✅ Salvato su Cloud con successo!', 'success');
     })
     .catch(function(e) {
       console.error('Firestore save error:', e);
-      setStatus('⚠️ Solo locale', 'var(--turmeric)');
+      setStatus('❌ Errore Cloud', 'var(--coral)');
+      if (showFeedback) showToast('❌ Errore durante il salvataggio.', 'error');
     });
 }
 
 function loadFirestore(showFeedback, forceServerFetch) {
   if (!fbReady || !db) return;
-  setStatus('⏳ Sync in corso…', 'var(--mist)');
+  setStatus('⏳ Sincronizzazione in corso…', 'var(--mist)');
   
   var options = forceServerFetch ? { source: 'server' } : {};
 
@@ -626,26 +755,28 @@ function loadFirestore(showFeedback, forceServerFetch) {
     .then(function(doc) {
       if (doc.exists) {
         var d = doc.data();
-        if (d.days) state.days = d.days;
-        if (d.transfers) state.transfers = d.transfers;
-        if (d.hotels) state.hotels = d.hotels;
-        if (d.extraCosts) state.extraCosts = d.extraCosts;
-        if (d.travelNotes !== undefined) state.travelNotes = d.travelNotes;
-        saveLS();
-        setStatus('☁️ Dati Cloud Aggiornati', 'var(--ocean)');
+        var loadedState = fromFirestore(d);
+        
+        state.days = loadedState.days;
+        state.transfers = loadedState.transfers;
+        state.hotels = loadedState.hotels;
+        state.extraCosts = loadedState.extraCosts;
+        state.travelNotes = loadedState.travelNotes;
+        
+        setStatus('☁️ DB attivo', 'var(--java)');
         
         var activeTab = document.querySelector('.tab.active').id.replace('tab-', '');
         var refreshFn = {dashboard:renderDashboard, itinerario:renderItinerary, trasferimenti:renderTransfers, alloggi:renderHotels, costi:renderCosts, note:renderNotes, mappa:renderMappa};
         if(refreshFn[activeTab]) refreshFn[activeTab]();
 
-        if (showFeedback) showToast('✅ Dati scaricati dal Cloud con successo!', 'success');
+        if (showFeedback) showToast('✅ Dati scaricati dal Cloud!', 'success');
       } else {
         saveFirestore(false);
       }
     })
     .catch(function(e) {
       console.warn('Firestore load error:', e);
-      setStatus('⚠️ Offline/Errore Sync', 'var(--turmeric)');
+      setStatus('⚠️ Errore Sync Cloud', 'var(--turmeric)');
       if (showFeedback) showToast('⚠️ Errore di connessione a Firebase.', 'error');
     });
 }
@@ -661,8 +792,119 @@ function manualSave() { saveFirestore(true); }
 
 function setStatus(msg, color) {
   var el = document.getElementById('last-saved');
-  if (el) { el.textContent = msg; el.style.color = color || 'var(--mist)'; }
+  if (el) { el.textContent = msg; el.style.color = color || 'var(--white)'; }
 }
+
+function toggleDropdown(event, id) {
+  event.stopPropagation();
+  var dropdown = document.getElementById(id);
+  var isHidden = dropdown.classList.contains('hidden');
+  
+  document.querySelectorAll('.filter-dropdown').forEach(function(el) {
+    el.classList.add('hidden');
+  });
+
+  if (isHidden) {
+    dropdown.classList.remove('hidden');
+  }
+}
+
+function initFilterDropdowns() {
+  // 1. Destinazioni (Dinamiche)
+  var dests = [...new Set(state.days.map(function(d) { return d.localita; }))].filter(Boolean);
+  var destContainer = document.getElementById('drop-dest');
+  if (destContainer) {
+    destContainer.innerHTML = dests.map(function(d) {
+      var isChecked = filterState.destinations.includes(d) ? 'checked' : '';
+      return '<label class="filter-item">' +
+               '<input type="checkbox" value="' + d + '" onchange="toggleFilter(\'destinations\', \'' + d + '\')" ' + isChecked + '> ' +
+               '<span>' + (LOC_FLAGS[d] || '📍') + ' ' + d + '</span>' +
+             '</label>';
+    }).join('');
+  }
+
+  // 2. Tipi di Trasporto / Alloggi
+  var types = [
+    {val: 'volo', lbl: '✈️ Volo'},
+    {val: 'traghetto', lbl: '⛵ Traghetto'},
+    {val: 'tour', lbl: '🧭 Tour'},
+    {val: 'taxi', lbl: '🚗 Taxi/Auto'},
+    {val: 'bus', lbl: '🚌 Bus'},
+    {val: 'hotel', lbl: '🏨 Alloggio'}
+  ];
+  var typeContainer = document.getElementById('drop-types');
+  if (typeContainer) {
+    typeContainer.innerHTML = types.map(function(t) {
+      var isChecked = filterState.types.includes(t.val) ? 'checked' : '';
+      return '<label class="filter-item">' +
+               '<input type="checkbox" value="' + t.val + '" onchange="toggleFilter(\'types\', \'' + t.val + '\')" ' + isChecked + '> ' +
+               '<span>' + t.lbl + '</span>' +
+             '</label>';
+    }).join('');
+  }
+
+  // 3. Pagamenti
+  var payments = [
+    {val: 'SI', lbl: '✓ Pagato'},
+    {val: 'PARZ', lbl: '◑ Parziale'},
+    {val: 'NO', lbl: '✗ Non pagato'}
+  ];
+  var payContainer = document.getElementById('drop-pay');
+  if (payContainer) {
+    payContainer.innerHTML = payments.map(function(p) {
+      var isChecked = filterState.payments.includes(p.val) ? 'checked' : '';
+      return '<label class="filter-item">' +
+               '<input type="checkbox" value="' + p.val + '" onchange="toggleFilter(\'payments\', \'' + p.val + '\')" ' + isChecked + '> ' +
+               '<span>' + p.lbl + '</span>' +
+             '</label>';
+    }).join('');
+  }
+
+  updateFilterLabels();
+}
+
+function toggleFilter(key, val) {
+  var index = filterState[key].indexOf(val);
+  if (index > -1) {
+    filterState[key].splice(index, 1);
+  } else {
+    filterState[key].push(val);
+  }
+  updateFilterLabels();
+  renderItinerary();
+}
+
+function updateFilterLabels() {
+  var destLabel = document.getElementById('lbl-dest');
+  if (destLabel) {
+    destLabel.textContent = filterState.destinations.length > 0 
+      ? 'Mete (' + filterState.destinations.length + ')' 
+      : 'Mete (Tutte)';
+  }
+
+  var typeLabel = document.getElementById('lbl-types');
+  if (typeLabel) {
+    typeLabel.textContent = filterState.types.length > 0 
+      ? 'Tipi (' + filterState.types.length + ')' 
+      : 'Tutti i tipi';
+  }
+
+  var payLabel = document.getElementById('lbl-pay');
+  if (payLabel) {
+    payLabel.textContent = filterState.payments.length > 0 
+      ? 'Pagamenti (' + filterState.payments.length + ')' 
+      : 'Tutti i pagamenti';
+  }
+}
+
+// Chiudi menu filtri al click esterno
+window.addEventListener('click', function(e) {
+  if (!e.target.closest('.filter-container')) {
+    document.querySelectorAll('.filter-dropdown').forEach(function(el) {
+      el.classList.add('hidden');
+    });
+  }
+});
 
 function showToast(msg, type) {
   var container = document.getElementById('notification-container');
@@ -766,7 +1008,6 @@ function runChecks() {
     }
   });
 
-  // Controllo per le notti mancanti a Gili (dal 17 al 21, data in cui vai a Bali)
   var giliDates = ["2026-08-17", "2026-08-18", "2026-08-19", "2026-08-20"];
   var missingGili = giliDates.some(function(dt) {
     var hs = hotelsForDate(dt);
@@ -793,7 +1034,7 @@ function restoreGiliHotel() {
     nome: "Trawangan Dive Resort",
     dest: "GILI T.",
     cin: "2026-08-17",
-    cout: "2026-08-21", // Check-out impostato al 21 agosto (4 notti: 17, 18, 19, 20)
+    cout: "2026-08-21",
     costoEUR: 431.16,
     pagato: "PARZ",
     ref: "",
@@ -820,7 +1061,7 @@ function alertsHTML(issues) {
     html += '<div class="alert alert-info" style="border-left-color: var(--turmeric); display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; width: 100%;">' +
       '<div style="display:flex; gap: 8px; align-items: center;">' +
         '<span class="ai">💡</span>' +
-        '<span><strong>Recupero Rapido Gili Trawangan (17-21 Ago)</strong>: Mancano le notti a Gili prima dello spostamento a Bali. Vuoi rigenerare la prenotazione originale da image_0d51f5.png con Check-out il 21 Agosto (4 notti)?</span>' +
+        '<span><strong>Recupero Rapido Gili Trawangan (17-21 Ago)</strong>: Mancano le notti a Gili prima dello spostamento a Bali. Vuoi rigenerare la prenotazione originale con Check-out il 21 Agosto (4 notti)?</span>' +
       '</div>' +
       '<button class="btn btn-accent btn-sm" onclick="restoreGiliHotel()" style="align-self: flex-start; background: var(--turmeric); color: white; padding: 6px 12px; border-radius: 6px; font-weight:700;">🛠️ Ripristina Prenotazione Gili Trawangan</button>' +
     '</div>';
@@ -906,9 +1147,10 @@ function renderCalendar() {
 function openDayInItinerary(dayId) {
   goTab('itinerario', document.querySelector('nav button:nth-child(2)'));
   document.getElementById('it-search').value = '';
-  document.getElementById('it-dest').value = '';
-  document.getElementById('it-type').value = '';
-  document.getElementById('it-pay').value = '';
+  filterState.destinations = [];
+  filterState.types = [];
+  filterState.payments = [];
+  initFilterDropdowns();
   renderItinerary();
   setTimeout(function() {
     var card = document.getElementById('tlc-' + dayId);
@@ -946,50 +1188,52 @@ function renderDestCards() {
   document.getElementById('db-dest').innerHTML = html;
 }
 
+function matchesSelectedTypes(dayDate, hs, ts) {
+  if (filterState.types.length === 0) return true;
+  return filterState.types.some(function(type) {
+    if (type === 'hotel') return hs.length > 0;
+    var mapping = { volo: 'Volo', traghetto: 'Traghetto', tour: 'Tour', taxi: 'Taxi/Auto', bus: 'Bus' };
+    var targetTipo = mapping[type];
+    return ts.some(function(t) { return t.tipo === targetTipo; });
+  });
+}
+
+function matchesSelectedPayments(hs, ts) {
+  if (filterState.payments.length === 0) return true;
+  return hs.some(function(h) { return filterState.payments.includes(h.pagato || 'NO'); }) ||
+         ts.some(function(t) { return t.costo && filterState.payments.includes(t.pagato || 'NO'); });
+}
+
 function renderItinerary() {
   var search = (document.getElementById('it-search').value || '').toLowerCase();
-  var fDest = document.getElementById('it-dest').value;
-  var fType = document.getElementById('it-type').value;
-  var fPay = document.getElementById('it-pay').value;
-  var issues = runChecks();
-
-  var dests = [...new Set(state.days.map(function(d) { return d.localita; }))].filter(Boolean);
-  var sel = document.getElementById('it-dest');
-  if (sel.options.length <= 1) {
-    dests.forEach(function(d) {
-      var o = document.createElement('option');
-      o.value = d; o.textContent = (LOC_FLAGS[d]||'') + ' ' + d;
-      sel.appendChild(o);
-    });
-  }
+  
+  initFilterDropdowns();
 
   var cont = document.getElementById('tl-cont');
   var html = '';
+  var issues = runChecks();
 
   state.days.forEach(function(day) {
     var loc = day.localita || '';
     var hs = hotelsForDate(day.data);
     var ts = transfersForDate(day.data);
 
-    if (fDest && loc !== fDest) return;
-
-    if (fType) {
-      if (fType === 'hotel' && hs.length === 0) return;
-      if (fType === 'volo' && !ts.some(function(t) { return t.tipo === 'Volo'; })) return;
-      if (fType === 'traghetto' && !ts.some(function(t) { return t.tipo === 'Traghetto'; })) return;
+    // 1. Filtro Destinazioni (Multi-selezione)
+    if (filterState.destinations.length > 0 && !filterState.destinations.includes(loc)) {
+      return;
     }
 
-    if (fPay) {
-      var hasMatchingPay = false;
-      if (hs.some(function(h) { return (h.pagato || 'NO') === fPay; })) {
-        hasMatchingPay = true;
-      }
-      if (ts.some(function(t) { return t.costo && (t.pagato || 'NO') === fPay; })) {
-        hasMatchingPay = true;
-      }
-      if (!hasMatchingPay) return;
+    // 2. Filtro Tipo Spostamento/Alloggio (Multi-selezione)
+    if (!matchesSelectedTypes(day.data, hs, ts)) {
+      return;
     }
 
+    // 3. Filtro Pagamenti (Multi-selezione)
+    if (!matchesSelectedPayments(hs, ts)) {
+      return;
+    }
+
+    // 4. Ricerca testuale libera
     if (search) {
       var matchesText = loc.toLowerCase().includes(search) ||
         day.note.toLowerCase().includes(search) ||
@@ -1027,7 +1271,6 @@ function renderItinerary() {
       tPanel = '<p style="color:var(--mist);font-size:13px">Nessun trasferimento. <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="openAddTransferDate(\'' + day.data + '\')">+ Aggiungi</button></p>';
     }
 
-    // GESTIONE SEPARATA ED INTELLIGENTE DI CHECK-OUT E CHECK-IN NELLO STESSO GIORNO
     var hPanel = '';
     var checkOutsToday = state.hotels.filter(function(h) { return h.cout === day.data; });
     var activeStays = hotelsForDate(day.data);
@@ -1508,24 +1751,78 @@ function importExcel(input) {
   reader.readAsArrayBuffer(file);
 }
 
-function exportExcel() {
+function exportExcelItinerary() {
+  var search = (document.getElementById('it-search').value || '').toLowerCase();
+  
+  // Filtra solo i dati attualmente visibili secondo i criteri multi-selezione correnti
+  var filteredDays = state.days.filter(function(day) {
+    var loc = day.localita || '';
+    var hs = hotelsForDate(day.data);
+    var ts = transfersForDate(day.data);
+
+    if (filterState.destinations.length > 0 && !filterState.destinations.includes(loc)) {
+      return false;
+    }
+    if (!matchesSelectedTypes(day.data, hs, ts)) {
+      return false;
+    }
+    if (!matchesSelectedPayments(hs, ts)) {
+      return false;
+    }
+    if (search) {
+      var matchesText = loc.toLowerCase().includes(search) ||
+        day.note.toLowerCase().includes(search) ||
+        hs.some(function(h) { return h.nome.toLowerCase().includes(search) || (h.note || '').toLowerCase().includes(search); }) ||
+        ts.some(function(t) { return (t.nome || '').toLowerCase().includes(search) || (t.note || '').toLowerCase().includes(search) || (t.da || '').toLowerCase().includes(search) || (t.a || '').toLowerCase().includes(search); });
+      if (!matchesText) return false;
+    }
+    return true;
+  });
+
+  if (filteredDays.length === 0) {
+    showToast('⚠️ Nessun giorno corrisponde ai filtri per essere esportato.', 'warn');
+    return;
+  }
+
   var wb = XLSX.utils.book_new();
   var head = ['Data','Giorno','Destinazione','Alloggio','Check-in','Check-out','Notti','Costo Hotel €','Pagato Hotel','Ref. Hotel','Tipo Transfer','Vettore','Da','A','Ora P.','Ora A.','Costo Transfer €','Pagato Transfer','Note Transfer'];
   var rows = [head];
-  state.days.forEach(function(d) {
-    var hs = hotelsForDate(d.data); var ts = transfersForDate(d.data);
+
+  filteredDays.forEach(function(d) {
+    var hs = hotelsForDate(d.data); 
+    var ts = transfersForDate(d.data);
     var h=hs[0], t=ts[0];
-    rows.push([d.data,d.giorno,d.localita,h?h.nome:'',h?h.cin:'',h?h.cout:'',h?nights(h.cin,h.cout):'',h?h.costoEUR:'',h?h.pagato:'',h?h.ref:'',t?t.tipo:'',t?t.nome:'',t?t.da:'',t?t.a:'',t?t.oraP:'',t?t.oraA:'',t?t.costo:'',t?t.pagato:'',t?t.note:'']);
+    rows.push([
+      d.data,
+      d.giorno,
+      d.localita,
+      h?h.nome:'',
+      h?h.cin:'',
+      h?h.cout:'',
+      h?nights(h.cin,h.cout):'',
+      h?h.costoEUR:'',
+      h?h.pagato:'',
+      h?h.ref:'',
+      t?t.tipo:'',
+      t?t.nome:'',
+      t?t.da:'',
+      t?t.a:'',
+      t?t.oraP:'',
+      t?t.oraA:'',
+      t?t.costo:'',
+      t?t.pagato:'',
+      t?t.note:''
+    ]);
   });
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), 'Itinerario');
-  XLSX.writeFile(wb, 'Indonesia_2026_' + new Date().toISOString().slice(0,10) + '.xlsx');
+
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), 'Itinerario Indonesia');
+  XLSX.writeFile(wb, 'Indonesia_2026_Filtrato_' + new Date().toISOString().slice(0,10) + '.xlsx');
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  var ts = loadLS();
-  if (ts && typeof ts === 'string') { setStatus('💾 Locale', 'var(--mist)'); } 
-  else { setStatus('💾 Dati default', 'var(--mist)'); }
+  setStatus('⏳ Caricamento cloud database…', 'var(--mist)');
   renderDashboard();
+  initFilterDropdowns();
   initFirebase();
 });
 </script>
