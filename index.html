@@ -23,10 +23,12 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--rice);
 
 header{background:linear-gradient(135deg,var(--ocean) 0%,var(--lagoon) 80%,#1cb1db 100%);color:#fff;position:sticky;top:0;z-index:300;box-shadow:0 4px 20px rgba(7,59,90,0.4);}
 .hdr-top{display:flex;align-items:center;gap:12px;padding:12px 16px; position: relative;}
+.hdr-title {cursor:pointer; transition: opacity 0.2s;}
+.hdr-title:hover {opacity: 0.85;}
 .hdr-title h1{font-size:20px;font-weight:800;letter-spacing:-0.5px;}
 .hdr-title .sub{font-size:11px;opacity:0.85;margin-top:2px;}
-.hdr-right{margin-left:auto;text-align:right;font-size:11px;opacity:0.9;line-height:1.4; padding-right: 40px;}
-.hdr-right strong{font-size:18px;display:block;color:var(--turmeric);}
+.hdr-right{margin-left:auto;text-align:right;font-size:11px;opacity:1.0;line-height:1.4; padding-right: 40px; color: #ffffff;}
+.hdr-right strong{font-size:20px;display:block;color:#ffca28;font-weight:800;text-shadow: 0 1px 2px rgba(0,0,0,0.4);}
 
 .menu-btn {
   position: absolute;
@@ -88,14 +90,28 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,select:fo
 select{cursor:pointer;}
 
 .kpi-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;}
-.kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 6px;text-align:center;border-top:4px solid var(--ocean);box-shadow:var(--shadow);}
-.kpi.amber{border-top-color:var(--turmeric);}
-.kpi.green{border-top-color:var(--java);}
-.kpi.red{border-top-color:var(--coral);}
-.kpi .val{font-size:18px;font-weight:800;color:var(--ocean);line-height:1.2; word-break: break-word;}
-.kpi.amber .val{color:var(--turmeric);}
-.kpi.green .val{color:var(--java);}
-.kpi.red .val{color:var(--coral);}
+.kpi{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px 6px;
+  text-align:center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  border-top: 1px solid var(--border); 
+}
+.kpi .val{
+  font-size:20px;
+  font-weight:800;
+  line-height:1.2; 
+  word-break: break-word;
+}
+.kpi.kpi-giorni .val{color:var(--ocean);}
+.kpi.kpi-mete .val{color:var(--java);}
+.kpi.kpi-voli .val{color:var(--turmeric);}
+.kpi.kpi-alloggi .val{color:var(--lagoon);}
+.kpi.kpi-budget .val{color:var(--coral);}
+.kpi.kpi-pagare .val{color:var(--turmeric);}
+
 .kpi .lbl{font-size:10px;color:var(--mist);margin-top:4px;text-transform:uppercase;letter-spacing:0.4px;font-weight:600;}
 
 .alerts{margin-bottom:12px;}
@@ -111,7 +127,7 @@ select{cursor:pointer;}
 .sh h2{font-size:16px;font-weight:700;color:var(--ocean);}
 
 .card-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
-.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:var(--shadow); transition: border-color 0.2s;}
 .card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px; gap:8px;}
 .card-title{font-weight:700;font-size:14px;color:var(--ink); line-height:1.3;}
 .card-actions{display:flex;gap:6px; flex-shrink: 0;}
@@ -206,7 +222,8 @@ select{cursor:pointer;}
   cursor: pointer;
 }
 
-.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 6px;border-radius:20px;font-size:10px;font-weight:600;}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 6px;border-radius:20px;font-size:10px;font-weight:600; transition: transform 0.15s;}
+.chip:hover {transform: scale(1.04);}
 .chip-fly{background:#def0fa;color:var(--ocean);}
 .chip-ferry{background:#fef0d8;color:#8b5a00;}
 .chip-tour{background:#fde8e8;color:var(--coral);}
@@ -260,7 +277,7 @@ code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-fa
 <header>
   <div class="hdr-top">
     <div style="font-size:32px">🌴</div>
-    <div class="hdr-title">
+    <div class="hdr-title" onclick="goTab('dashboard')">
       <h1>Indonesia 2026</h1>
       <div class="sub">Pianificatore — 22 giorni</div>
     </div>
@@ -286,14 +303,14 @@ code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-fa
 
 <!-- DASHBOARD -->
 <div id="tab-dashboard" class="tab active">
-  <!-- Calendario per primo, in assoluto! -->
+  <!-- Calendario visualizzato per primo -->
   <div class="sh" style="margin-top:0;"><h2>📆 Agosto 2026</h2></div>
   <div class="cal-wrap">
     <div class="cal-legend" id="cal-legend"></div>
     <div class="cal-grid" id="cal-grid"></div>
   </div>
 
-  <!-- Aree riassuntive posizionate sotto al calendario -->
+  <!-- Aree riassuntive riposizionate sotto al calendario con nuovo look minimale -->
   <div class="kpi-row" id="db-kpi"></div>
   <div class="alerts" id="db-alerts"></div>
   
@@ -485,6 +502,20 @@ const LOC_FLAGS = {"MXP":"🇮🇹","JAKARTA":"🏙️","YOGYAKARTA":"🏛️","
 const LOC_CLASS = {"MXP":"c-MXP","JAKARTA":"c-JAKARTA","YOGYAKARTA":"c-YOGYAKARTA","UBUD":"c-UBUD","GILI T.":"c-GILIT","LABUAN BAJO":"c-LABUANBAJO"};
 const TIPO_ICON = {"Volo":"✈️","Traghetto":"⛵","Tour":"🧭","Taxi/Auto":"🚗","Bus":"🚌","Altro":"🔀"};
 
+// Mappatura delle date con i rispettivi file PDF caricati nella stessa cartella del progetto
+const DATE_DOCS = {
+  "2026-08-21": {
+    transfers: {
+      "Traghetto": "GILI T. TO BALI 21 agosto.pdf"
+    },
+    hotels: {
+      "Trawangan Dive Resort": "BALI 21 agosto Booking #5397254990.pdf",
+      "GILI T.": "BALI 21 agosto Booking #5397254990.pdf",
+      "alloggio": "BALI 21 agosto Booking #5397254990.pdf"
+    }
+  }
+};
+
 const FB_CONFIG = {
   apiKey:            "AIzaSyALyvupZcBogh5KGATUQur4AeCrpZtzDLo",
   authDomain:        "casa-mare-c974a.firebaseapp.com",
@@ -546,7 +577,6 @@ var state = {
   travelNotes: ""
 };
 
-// Stato dei filtri multi-selezione
 var filterState = {
   destinations: [],
   types: [],
@@ -810,7 +840,6 @@ function toggleDropdown(event, id) {
 }
 
 function initFilterDropdowns() {
-  // 1. Destinazioni (Dinamiche)
   var dests = [...new Set(state.days.map(function(d) { return d.localita; }))].filter(Boolean);
   var destContainer = document.getElementById('drop-dest');
   if (destContainer) {
@@ -823,7 +852,6 @@ function initFilterDropdowns() {
     }).join('');
   }
 
-  // 2. Tipi di Trasporto / Alloggi
   var types = [
     {val: 'volo', lbl: '✈️ Volo'},
     {val: 'traghetto', lbl: '⛵ Traghetto'},
@@ -843,7 +871,6 @@ function initFilterDropdowns() {
     }).join('');
   }
 
-  // 3. Pagamenti
   var payments = [
     {val: 'SI', lbl: '✓ Pagato'},
     {val: 'PARZ', lbl: '◑ Parziale'},
@@ -897,7 +924,6 @@ function updateFilterLabels() {
   }
 }
 
-// Chiudi menu filtri al click esterno
 window.addEventListener('click', function(e) {
   if (!e.target.closest('.filter-container')) {
     document.querySelectorAll('.filter-dropdown').forEach(function(el) {
@@ -973,10 +999,36 @@ function paidBadge(p) {
   if (p==='NO')   return '<span class="tag tag-unpaid">✗ Non pagato</span>';
   return '<span class="tag tag-unpaid">? Da verificare</span>';
 }
-function tipChip(tipo) {
-  var cls = {Volo:'chip-fly',Traghetto:'chip-ferry',Tour:'chip-tour'};
-  return '<span class="chip ' + (cls[tipo]||'chip-transfer') + '">' + (TIPO_ICON[tipo]||'🔀') + ' ' + tipo + '</span>';
+
+function getHotelDoc(date, hotel) {
+  if (!DATE_DOCS[date] || !DATE_DOCS[date].hotels) return null;
+  var hotDocs = DATE_DOCS[date].hotels;
+  if (hotDocs[hotel.nome]) return hotDocs[hotel.nome];
+  if (hotDocs[hotel.dest]) return hotDocs[hotel.dest];
+  if (hotDocs[hotel.id]) return hotDocs[hotel.id];
+  return hotDocs["alloggio"] || hotDocs["any"] || null;
 }
+
+function getTransferDoc(date, transferType) {
+  if (!DATE_DOCS[date] || !DATE_DOCS[date].transfers) return null;
+  var transDocs = DATE_DOCS[date].transfers;
+  return transDocs[transferType] || transDocs["any"] || null;
+}
+
+function tipChip(tipo, date) {
+  var cls = {Volo:'chip-fly',Traghetto:'chip-ferry',Tour:'chip-tour'};
+  var chipClass = cls[tipo] || 'chip-transfer';
+  var chipIcon = TIPO_ICON[tipo] || '🔀';
+  var doc = getTransferDoc(date, tipo);
+  
+  var chipHtml = '<span class="chip ' + chipClass + '"' + (doc ? ' style="cursor:pointer;"' : '') + '>' + chipIcon + ' ' + tipo + '</span>';
+  
+  if (doc) {
+    return '<a href="./' + encodeURIComponent(doc) + '" target="_blank" style="text-decoration:none;" title="Apri documento: ' + doc + '">' + chipHtml + '</a>';
+  }
+  return chipHtml;
+}
+
 function cmp(a,b) { return a<b?-1:a>b?1:0; }
 function hotelsForDate(dt) {
   return state.hotels.filter(function(h) { return h.cin && h.cout && dt >= h.cin && dt < h.cout; });
@@ -997,8 +1049,11 @@ function parseFloatIT(val) {
 function runChecks() {
   var issues = [];
   
-  state.days.forEach(function(d) {
+  state.days.forEach(function(d, index) {
     if (d.localita === 'MXP') return;
+    if (index === state.days.length - 1) return;
+    if (d.localita && /\bTO\b/i.test(d.localita)) return;
+    
     var h = hotelsForDate(d.data);
     if (!h.length) {
       issues.push({
@@ -1092,12 +1147,12 @@ function renderDashboard() {
   var unpaid = state.hotels.filter(function(h) { return h.pagato !== 'SI'; }).length;
 
   document.getElementById('db-kpi').innerHTML =
-    '<div class="kpi"><div class="val">' + state.days.length + '</div><div class="lbl">Giorni</div></div>' +
-    '<div class="kpi green"><div class="val">' + dests.length + '</div><div class="lbl">Mete</div></div>' +
-    '<div class="kpi amber"><div class="val">' + voli.length + '</div><div class="lbl">Voli</div></div>' +
-    '<div class="kpi"><div class="val">' + state.hotels.length + '</div><div class="lbl">Alloggi</div></div>' +
-    '<div class="kpi red"><div class="val">€' + Math.round(tot).toLocaleString('it-IT') + '</div><div class="lbl">Budget</div></div>' +
-    '<div class="kpi amber"><div class="val">' + unpaid + '</div><div class="lbl">Da Pagare</div></div>';
+    '<div class="kpi kpi-giorni"><div class="val">' + state.days.length + '</div><div class="lbl">Giorni</div></div>' +
+    '<div class="kpi kpi-mete"><div class="val">' + dests.length + '</div><div class="lbl">Mete</div></div>' +
+    '<div class="kpi kpi-voli"><div class="val">' + voli.length + '</div><div class="lbl">Voli</div></div>' +
+    '<div class="kpi kpi-alloggi"><div class="val">' + state.hotels.length + '</div><div class="lbl">Alloggi</div></div>' +
+    '<div class="kpi kpi-budget"><div class="val">€' + Math.round(tot).toLocaleString('it-IT') + '</div><div class="lbl">Budget</div></div>' +
+    '<div class="kpi kpi-pagare"><div class="val">' + unpaid + '</div><div class="lbl">Da Pagare</div></div>';
 
   document.getElementById('db-alerts').innerHTML = alertsHTML(runChecks());
   renderCalendar();
@@ -1171,15 +1226,28 @@ function renderDestCards() {
     if (!rows[l]) rows[l] = {loc:l, days:[], hotels:[]};
     rows[l].days.push(d.data);
   });
+  
   state.hotels.forEach(function(h) {
-    if (rows[h.dest]) rows[h.dest].hotels.push(h);
+    Object.keys(rows).forEach(function(locKey) {
+      var possibleDests = locKey.split(/\s+TO\s+/i).map(function(s) { return s.trim().toUpperCase(); });
+      if (possibleDests.includes(h.dest.toUpperCase()) || locKey.toUpperCase() === h.dest.toUpperCase()) {
+        if (!rows[locKey].hotels.some(function(existing) { return existing.id === h.id; })) {
+          rows[locKey].hotels.push(h);
+        }
+      }
+    });
   });
+  
   var html = '';
   Object.values(rows).forEach(function(r) {
     var sorted = r.days.sort();
     var alloggi = r.hotels.map(function(h) { return h.nome; }).join(', ') || '<span style="color:var(--coral)">⚠️ Mancante</span>';
-    html += '<div class="card">' +
-      '<div class="dr"><span class="dk">Metà</span><span class="dv">' + (LOC_FLAGS[r.loc]||'') + ' <strong>' + r.loc + '</strong></span></div>' +
+    
+    var matchDay = state.days.find(function(d) { return d.localita === r.loc; });
+    var clickAttr = matchDay ? 'onclick="openDayInItinerary(\'' + matchDay.id + '\')"' : '';
+    
+    html += '<div class="card" ' + clickAttr + ' style="cursor:pointer; transition: all 0.2s;" onmouseover="this.style.borderColor=\'var(--lagoon)\'; this.style.boxShadow=\'0 4px 18px rgba(14,125,163,0.15)\'" onmouseout="this.style.borderColor=\'var(--border)\'; this.style.boxShadow=\'var(--shadow)\'">' +
+      '<div class="dr"><span class="dk">Meta</span><span class="dv">' + (LOC_FLAGS[r.loc]||'') + ' <strong>' + r.loc + '</strong> ➡️</span></div>' +
       '<div class="dr"><span class="dk">Arrivo</span><span class="dv">' + fmtD(sorted[0],true) + '</span></div>' +
       '<div class="dr"><span class="dk">Notti</span><span class="dv"><strong>' + sorted.length + '</strong></span></div>' +
       '<div class="dr"><span class="dk">Alloggio</span><span class="dv" style="font-size:12px">' + alloggi + '</span></div>' +
@@ -1218,22 +1286,18 @@ function renderItinerary() {
     var hs = hotelsForDate(day.data);
     var ts = transfersForDate(day.data);
 
-    // 1. Filtro Destinazioni (Multi-selezione)
     if (filterState.destinations.length > 0 && !filterState.destinations.includes(loc)) {
       return;
     }
 
-    // 2. Filtro Tipo Spostamento/Alloggio (Multi-selezione)
     if (!matchesSelectedTypes(day.data, hs, ts)) {
       return;
     }
 
-    // 3. Filtro Pagamenti (Multi-selezione)
     if (!matchesSelectedPayments(hs, ts)) {
       return;
     }
 
-    // 4. Ricerca testuale libera
     if (search) {
       var matchesText = loc.toLowerCase().includes(search) ||
         day.note.toLowerCase().includes(search) ||
@@ -1251,14 +1315,43 @@ function renderItinerary() {
     else if (hs.length) nodeCls += ' h-only';
 
     var chips = '';
-    ts.forEach(function(t) { chips += tipChip(t.tipo); });
-    if (hs.length) chips += '<span class="chip chip-hotel">🏨 ' + hs[0].nome.substring(0,16) + (hs[0].nome.length>16?'…':'') + '</span>';
+    ts.forEach(function(t) { chips += tipChip(t.tipo, day.data); });
+    
+    if (hs.length) {
+      var h = hs[0];
+      var hDoc = getHotelDoc(day.data, h);
+      var chipClass = "chip chip-hotel";
+      var chipContent = "🏨 " + h.nome.substring(0,16) + (h.nome.length>16?'…':'');
+      if (hDoc) {
+        chips += '<a href="./' + encodeURIComponent(hDoc) + '" target="_blank" style="text-decoration:none;" title="Apri documento: ' + hDoc + '"><span class="' + chipClass + '" style="cursor:pointer;">' + chipContent + '</span></a>';
+      } else {
+        chips += '<span class="' + chipClass + '">' + chipContent + '</span>';
+      }
+    }
+    
     if (dayIssues.length) chips += '<span class="tl-warn-dot">⚠️ ' + dayIssues.length + '</span>';
 
-    var tPanel = '';
+    var dParts = day.data.split('-');
+    var dObj = new Date(dParts[0], dParts[1] - 1, dParts[2]);
+    dObj.setDate(dObj.getDate() - 1);
+    var prevDate = dObj.getFullYear() + '-' + String(dObj.getMonth() + 1).padStart(2, '0') + '-' + String(dObj.getDate()).padStart(2, '0');
+    
+    var incomingTransfers = state.transfers.filter(function(t) {
+      return t.data === prevDate && (t.oraA && t.oraA.includes('+1'));
+    });
+
+    var incomingHtml = '';
+    if (incomingTransfers.length) {
+      incomingHtml = incomingTransfers.map(function(t) {
+        return '<div style="font-size:12px; color:var(--lagoon); background: #e8f4fa; border: 1.5px dashed var(--lagoon); padding: 8px; border-radius: 8px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">' +
+               '🛬 <span><strong>Arrivo Volo (decollato ieri):</strong> ' + t.nome + ' (' + t.da + ' → ' + t.a + ' alle ' + t.oraA.replace('+1', '') + ')</span></div>';
+      }).join('');
+    }
+
+    var tPanel = incomingHtml;
     if (ts.length) {
-      tPanel = ts.map(function(t) {
-        return '<div class="dr"><span class="dk">Tipo</span><span class="dv">' + tipChip(t.tipo) + '</span></div>' +
+      tPanel += ts.map(function(t) {
+        return '<div class="dr"><span class="dk">Tipo</span><span class="dv">' + tipChip(t.tipo, day.data) + '</span></div>' +
           '<div class="dr"><span class="dk">Vettore</span><span class="dv">' + (t.nome||'—') + '</span></div>' +
           '<div class="dr"><span class="dk">Tratta</span><span class="dv" style="font-size:12px">' + (t.da||'—') + ' → ' + (t.a||'—') + '</span></div>' +
           '<div class="dr"><span class="dk">Orari</span><span class="dv">' + (t.oraP||'?') + ' → ' + (t.oraA||'?') + '</span></div>' +
@@ -1267,7 +1360,7 @@ function renderItinerary() {
           (t.note ? '<div class="dr"><span class="dk">Note</span><span class="dv" style="font-size:12px">' + t.note + '</span></div>' : '') +
           '<div style="text-align:right;margin-top:8px"><button class="btn btn-ghost btn-sm" onclick="openEditTransfer(\'' + t.id + '\')">✏️ Modifica</button></div>';
       }).join('<hr style="border:none;border-top:1px dashed var(--border);margin:10px 0">');
-    } else {
+    } else if (!incomingTransfers.length) {
       tPanel = '<p style="color:var(--mist);font-size:13px">Nessun trasferimento. <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="openAddTransferDate(\'' + day.data + '\')">+ Aggiungi</button></p>';
     }
 
@@ -1278,8 +1371,16 @@ function renderItinerary() {
     var coHtml = '';
     if (checkOutsToday.length) {
       coHtml = checkOutsToday.map(function(h) {
-        return '<div style="font-size:12px; color:var(--coral); font-weight: 600; margin-bottom: 6px;">' +
-               '◀ <strong>Check-out:</strong> ' + h.nome + '</div>';
+        var hDoc = getHotelDoc(day.data, h);
+        var labelStr = '◀ <strong>Check-out:</strong> ' + h.nome;
+        if (hDoc) {
+          return '<div style="font-size:12px; margin-bottom: 6px;">' +
+                 '<a href="./' + encodeURIComponent(hDoc) + '" target="_blank" style="color:var(--coral); font-weight: 600; text-decoration:none; display:inline-flex; align-items:center; gap:6px;" title="Apri documento: ' + hDoc + '">' +
+                 '<span>' + labelStr + '</span>' +
+                 '<span style="background:var(--coral); color:#fff; font-size:9px; padding:2px 6px; border-radius:4px; font-weight:bold; cursor:pointer;">PDF 📄</span>' +
+                 '</a></div>';
+        }
+        return '<div style="font-size:12px; color:var(--coral); font-weight: 600; margin-bottom: 6px;">' + labelStr + '</div>';
       }).join('');
     }
 
@@ -1287,7 +1388,16 @@ function renderItinerary() {
       hPanel = coHtml + activeStays.map(function(h) {
         var isCI = h.cin === day.data;
         var badge = isCI ? '<span style="color:var(--java)">▶ Check-in</span>' : 'In corso';
-        return '<div class="dr"><span class="dk">Struttura</span><span class="dv" style="font-size:12px">' + h.nome + '</span></div>' +
+        var hDoc = getHotelDoc(day.data, h);
+        
+        var structureValue = hDoc 
+          ? '<a href="./' + encodeURIComponent(hDoc) + '" target="_blank" style="color:var(--ocean); font-weight:700; text-decoration:underline; display:inline-flex; align-items:center; gap:6px;" title="Apri documento: ' + hDoc + '">' +
+            '<span>' + h.nome + '</span>' +
+            '<span style="background:var(--java); color:#fff; font-size:9px; padding:2px 6px; border-radius:4px; font-weight:bold; cursor:pointer;">PDF 📄</span>' +
+            '</a>'
+          : h.nome;
+
+        return '<div class="dr"><span class="dk">Struttura</span><span class="dv" style="font-size:12px">' + structureValue + '</span></div>' +
           '<div class="dr"><span class="dk">Stato</span><span class="dv">' + badge + '</span></div>' +
           '<div class="dr"><span class="dk">Notti</span><span class="dv">' + nights(h.cin,h.cout) + '</span></div>' +
           '<div class="dr"><span class="dk">Costo</span><span class="dv">€' + (h.costoEUR ? h.costoEUR.toFixed(2) : '—') + '</span></div>' +
@@ -1305,6 +1415,28 @@ function renderItinerary() {
         hPanel += '<p style="color:var(--coral);font-size:13px;font-weight:700">⚠️ Nessun alloggio attivo.<br>' +
           '<button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="openAddHotelDate(\'' + day.data + '\')">+ Alloggio</button></p>';
       }
+    }
+
+    var docFile = null;
+    if (DATE_DOCS[day.data]) {
+      if (typeof DATE_DOCS[day.data] === 'string') {
+        docFile = DATE_DOCS[day.data];
+      } else {
+        var obj = DATE_DOCS[day.data];
+        if (obj.transfers) {
+          docFile = Object.values(obj.transfers)[0];
+        }
+        if (!docFile && obj.hotels) {
+          docFile = Object.values(obj.hotels)[0];
+        }
+      }
+    }
+
+    var docBtn = '';
+    if (docFile) {
+      docBtn = '<a href="./' + encodeURIComponent(docFile) + '" target="_blank" class="btn btn-green btn-sm" style="flex: 1; min-width: 125px; text-decoration: none;">📄 Apri Documento</a>';
+    } else {
+      docBtn = '<button class="btn btn-ghost btn-sm" style="flex: 1; min-width: 125px; opacity: 0.4; cursor: not-allowed;" disabled>📄 Nessun Doc</button>';
     }
 
     html += '<div class="tl-day">' +
@@ -1327,6 +1459,7 @@ function renderItinerary() {
             '</p>' +
           '</div>' +
           '<div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; padding-top: 12px; border-top: 1.5px solid #f0f3f5; flex-wrap: wrap;">' +
+            docBtn +
             '<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); openEditDay(\'' + day.id + '\')" style="flex: 1; min-width: 125px;">✏️ Modifica Giorno</button>' +
             '<button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteDay(\'' + day.id + '\')" style="flex: 1; min-width: 125px;">🗑️ Elimina Giorno</button>' +
           '</div>' +
@@ -1343,7 +1476,7 @@ function renderTransfers() {
     var d = dayObj(t.data);
     return '<div class="card">' +
       '<div class="card-header">' +
-        '<div>' + tipChip(t.tipo) + ' <span class="card-title" style="margin-left:4px">' + (t.nome||'—') + '</span></div>' +
+        '<div>' + tipChip(t.tipo, t.data) + ' <span class="card-title" style="margin-left:4px">' + (t.nome||'—') + '</span></div>' +
         '<div class="card-actions">' +
           '<button class="btn btn-ghost btn-sm" onclick="openEditTransfer(\'' + t.id + '\')">✏️</button>' +
           '<button class="btn btn-danger btn-sm" onclick="deleteTransfer(\'' + t.id + '\')">✕</button>' +
@@ -1388,9 +1521,9 @@ function renderCosts() {
   var saldo = totEur - paid;
 
   document.getElementById('co-kpi').innerHTML =
-    '<div class="kpi"><div class="val">€' + Math.round(totEur).toLocaleString('it-IT') + '</div><div class="lbl">Totale</div></div>' +
-    '<div class="kpi green"><div class="val">€' + Math.round(paid).toLocaleString('it-IT') + '</div><div class="lbl">Pagato</div></div>' +
-    '<div class="kpi red"><div class="val">€' + Math.round(saldo).toLocaleString('it-IT') + '</div><div class="lbl">Residuo</div></div>';
+    '<div class="kpi kpi-giorni"><div class="val">€' + Math.round(totEur).toLocaleString('it-IT') + '</div><div class="lbl">Totale</div></div>' +
+    '<div class="kpi kpi-mete"><div class="val">€' + Math.round(paid).toLocaleString('it-IT') + '</div><div class="lbl">Pagato</div></div>' +
+    '<div class="kpi kpi-budget"><div class="val">€' + Math.round(saldo).toLocaleString('it-IT') + '</div><div class="lbl">Residuo</div></div>';
 
   var html = rows.map(function(r) {
     var cls = {Hotel:'chip-hotel',Volo:'chip-fly',Tour:'chip-tour'}[r.cat] || 'chip-transfer';
@@ -1712,14 +1845,42 @@ function renderMappa() {
     var coord = [t.lat, t.lng]; bounds.push(coord);
     var icon = L.divIcon({
       className: '',
-      html: '<div style="background:'+t.colore+';color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.35);border:2px solid #fff;">'+t.icon+'</div>',
+      html: '<div style="background:'+t.colore+';color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.35);border:2px solid #fff;cursor:pointer;">'+t.icon+'</div>',
       iconSize: [30, 30], iconAnchor: [15, 15]
     });
-    L.marker(coord, { icon: icon }).addTo(_map);
+    var marker = L.marker(coord, { icon: icon }).addTo(_map);
+    
+    marker.on('click', function() {
+      var matchingDays = state.days.filter(function(d) {
+        return d.localita === t.id || d.localita.includes(t.id);
+      });
+      if (matchingDays.length > 0) {
+        openDayInItinerary(matchingDays[0].id);
+      }
+    });
   });
 
   if (bounds.length > 1) _map.fitBounds(bounds, { padding: [20, 20] });
   setTimeout(function() { _map.invalidateSize(); }, 100);
+
+  var legendHtml = TAPPE.map(function(t) {
+    var matchingDays = state.days.filter(function(d) {
+      return d.localita === t.id || d.localita.includes(t.id);
+    });
+    var dateRangeStr = matchingDays.length > 0 
+      ? fmtD(matchingDays[0].data, true) + ' - ' + fmtD(matchingDays[matchingDays.length - 1].data, true)
+      : '';
+    
+    var clickAttr = matchingDays.length > 0 
+      ? 'onclick="openDayInItinerary(\'' + matchingDays[0].id + '\')"' 
+      : '';
+    
+    return '<div class="card" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition: all 0.2s; border: 1px solid var(--border);" ' + clickAttr + ' onmouseover="this.style.borderColor=\'var(--lagoon)\'" onmouseout="this.style.borderColor=\'var(--border)\'">' +
+      '<div><span style="font-size:20px; margin-right:8px;">' + t.icon + '</span><strong>' + t.nome + '</strong></div>' +
+      '<div style="font-size:12px; color:var(--mist); font-weight:600;">' + dateRangeStr + ' ➡️</div>' +
+      '</div>';
+  }).join('');
+  document.getElementById('map-legend').innerHTML = legendHtml;
 }
 
 function geodesicPoints(from, to, n) {
@@ -1754,7 +1915,6 @@ function importExcel(input) {
 function exportExcelItinerary() {
   var search = (document.getElementById('it-search').value || '').toLowerCase();
   
-  // Filtra solo i dati attualmente visibili secondo i criteri multi-selezione correnti
   var filteredDays = state.days.filter(function(day) {
     var loc = day.localita || '';
     var hs = hotelsForDate(day.data);
