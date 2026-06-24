@@ -64,6 +64,41 @@ nav button {
 nav button:last-child { border-bottom: none; }
 nav button.active { color: #fff; border-left-color: var(--turmeric); background: rgba(255,255,255,0.08); }
 
+/* Sezione Documenti Generali nella Sticky Bar */
+.hdr-docs {
+  background: rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.hdr-docs-lbl {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.85);
+}
+.hdr-doc-tag {
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: background 0.2s, transform 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.hdr-doc-tag:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.03);
+}
+
 main{padding:16px; width: 100%; max-width: 100vw; overflow-x: hidden;}
 .tab{display:none;}
 .tab.active{display:block; animation: fadeIn 0.3s ease;}
@@ -96,8 +131,7 @@ select{cursor:pointer;}
   border-radius:12px;
   padding:14px 6px;
   text-align:center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-  border-top: 1px solid var(--border); 
+  box-shadow: var(--shadow);
 }
 .kpi .val{
   font-size:20px;
@@ -282,9 +316,9 @@ code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-fa
       <div class="sub">Pianificatore — 22 giorni</div>
     </div>
     <div class="hdr-right">
-      <strong id="hdr-countdown">—</strong>
+      <strong id="hdr-countdown" style="color: #ffca28; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">—</strong>
       giorni alla partenza
-      <div id="last-saved" class="status-bar">⏳ Sincronizzazione in corso...</div>
+      <div id="last-saved" class="status-bar">⏳ Sincronizzazione...</div>
     </div>
     <button class="menu-btn" onclick="toggleMenu()">☰</button>
   </div>
@@ -297,6 +331,13 @@ code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-fa
     <button onclick="goTab('note',this)">📝 Note</button>
     <button onclick="goTab('mappa',this)">🗺️ Mappa</button>
   </nav>
+  
+  <!-- Sezione Documenti Generali Richiesta -->
+  <div class="hdr-docs">
+    <span class="hdr-docs-lbl">📁 Documenti generali:</span>
+    <a href="./assicurazione%20di%20viaggio.pdf" target="_blank" class="hdr-doc-tag">🛡️ Assicurazione viaggio</a>
+    <a href="./voli%20interni.pdf" target="_blank" class="hdr-doc-tag">✈️ Trasporti interni</a>
+  </div>
 </header>
 
 <main>
@@ -310,7 +351,7 @@ code{background:#f0f3f5;padding:2px 5px;border-radius:4px;font-size:11px;font-fa
     <div class="cal-grid" id="cal-grid"></div>
   </div>
 
-  <!-- Aree riassuntive riposizionate sotto al calendario con nuovo look minimale -->
+  <!-- Aree riassuntive riposizionate sotto al calendario con look minimale -->
   <div class="kpi-row" id="db-kpi"></div>
   <div class="alerts" id="db-alerts"></div>
   
@@ -502,16 +543,86 @@ const LOC_FLAGS = {"MXP":"🇮🇹","JAKARTA":"🏙️","YOGYAKARTA":"🏛️","
 const LOC_CLASS = {"MXP":"c-MXP","JAKARTA":"c-JAKARTA","YOGYAKARTA":"c-YOGYAKARTA","UBUD":"c-UBUD","GILI T.":"c-GILIT","LABUAN BAJO":"c-LABUANBAJO"};
 const TIPO_ICON = {"Volo":"✈️","Traghetto":"⛵","Tour":"🧭","Taxi/Auto":"🚗","Bus":"🚌","Altro":"🔀"};
 
-// Mappatura delle date con i rispettivi file PDF caricati nella stessa cartella del progetto
+// Configurazione completa documenti locali e cloud per data
 const DATE_DOCS = {
+  "2026-08-08": {
+    transfers: {
+      "Volo": "8-29 agosto ordine volo milano jakarta.pdf",
+      "any": "8-29 agosto ordine volo milano jakarta.pdf"
+    }
+  },
+  "2026-08-09": {
+    hotels: {
+      "FM7 Resort Hotel Jakarta": "FM7 Resort Hotel - Airport Hotel Bandaran confirmation 09 Agosto.pdf",
+      "any": "FM7 Resort Hotel - Airport Hotel Bandaran confirmation 09 Agosto.pdf"
+    }
+  },
+  "2026-08-13": {
+    hotels: {
+      "Teba Junjungan Cottages": "Booking.com_ Conferma ubudu 13-17 agosto.pdf",
+      "any": "Booking.com_ Conferma ubudu 13-17 agosto.pdf"
+    }
+  },
+  "2026-08-14": {
+    hotels: {
+      "Teba Junjungan Cottages": "Booking.com_ Conferma ubudu 13-17 agosto.pdf",
+      "any": "Booking.com_ Conferma ubudu 13-17 agosto.pdf"
+    }
+  },
+  "2026-08-15": {
+    hotels: {
+      "Teba Junjungan Cottages": "Booking.com_ Conferma ubudu 13-17 agosto.pdf",
+      "any": "Booking.com_ Conferma ubudu 13-17 agosto.pdf"
+    }
+  },
+  "2026-08-16": {
+    hotels: {
+      "Teba Junjungan Cottages": "Booking.com_ Conferma ubudu 13-17 agosto.pdf",
+      "any": "Booking.com_ Conferma ubudu 13-17 agosto.pdf"
+    }
+  },
+  "2026-08-17": {
+    transfers: {
+      "Traghetto": "UBUD TO GILI T. 17 agosto.pdf",
+      "any": "UBUD TO GILI T. 17 agosto.pdf"
+    },
+    hotels: {
+      "Trawangan Dive Resort": "GILI T. TRWANGAN DIVE RESORT 17 agosto.pdf",
+      "any": "GILI T. TRWANGAN DIVE RESORT 17 agosto.pdf"
+    }
+  },
+  "2026-08-18": {
+    hotels: {
+      "Trawangan Dive Resort": "GILI T. TRWANGAN DIVE RESORT 17 agosto.pdf",
+      "any": "GILI T. TRWANGAN DIVE RESORT 17 agosto.pdf"
+    }
+  },
+  "2026-08-19": {
+    hotels: {
+      "Trawangan Dive Resort": "GILI T. TRWANGAN DIVE RESORT 17 agosto.pdf",
+      "any": "GILI T. TRWANGAN DIVE RESORT 17 agosto.pdf"
+    }
+  },
+  "2026-08-20": {
+    hotels: {
+      "Trawangan Dive Resort": "GILI T. TRWANGAN DIVE RESORT 17 agosto.pdf",
+      "any": "GILI T. TRWANGAN DIVE RESORT 17 agosto.pdf"
+    }
+  },
   "2026-08-21": {
     transfers: {
-      "Traghetto": "GILI T. TO BALI 21 agosto.pdf"
+      "Traghetto": "GILI T. TO BALI 21 agosto.pdf",
+      "any": "GILI T. TO BALI 21 agosto.pdf"
     },
     hotels: {
       "Trawangan Dive Resort": "BALI 21 agosto Booking #5397254990.pdf",
-      "GILI T.": "BALI 21 agosto Booking #5397254990.pdf",
-      "alloggio": "BALI 21 agosto Booking #5397254990.pdf"
+      "any": "BALI 21 agosto Booking #5397254990.pdf"
+    }
+  },
+  "2026-08-29": {
+    transfers: {
+      "Volo": "8-29 agosto ordine volo milano jakarta.pdf",
+      "any": "8-29 agosto ordine volo milano jakarta.pdf"
     }
   }
 };
@@ -559,7 +670,8 @@ var state = {
     {id:"t04",data:"2026-08-17",tipo:"Traghetto",nome:"Fast Boat + Transfer",da:"Ubud",a:"Gili Trawangan",oraP:"",oraA:"",costo:null,pagato:null,ref:"",note:"Spostamento via terra + traghetto"},
     {id:"t05",data:"2026-08-22",tipo:"Volo",nome:"Air Asia",da:"Bali DPS",a:"Labuan Bajo LBJ",oraP:"15:45",oraA:"17:00",costo:null,pagato:"SI",ref:"PRENOTAZIONE BOOKING",note:""},
     {id:"t06",data:"2026-08-24",tipo:"Tour",nome:"PT Flores Pristine Tour",da:"Labuan Bajo",a:"Area Komodo",oraP:"",oraA:"",costo:600,pagato:"PARZ",ref:"",note:"Tour 3D2N – $700 tot. / $175 già pagati con Paysend"},
-    {id:"t07",data:"2026-08-27",tipo:"Volo",nome:"Air Asia",da:"Labuan Bajo LBJ",a:"Jakarta CGK",oraP:"16:30",oraA:"17:55",costo:null,pagato:"SI",ref:"PRENOTAZIONE BOOKING",note:""}
+    {id:"t07",data:"2026-08-27",tipo:"Volo",nome:"Air Asia",da:"Labuan Bajo LBJ",a:"Jakarta CGK",oraP:"16:30",oraA:"17:55",costo:null,pagato:"SI",ref:"PRENOTAZIONE BOOKING",note:""},
+    {id:"t08",data:"2026-08-29",tipo:"Volo",nome:"Saudi Arabian Airlines",da:"Jakarta CGK",a:"Milano MXP",oraP:"19:00",oraA:"06:00+1",costo:null,pagato:"SI",ref:"",note:"Volo di rientro in Italia"}
   ],
   hotels: [
     {id:"h01",nome:"FM7 Resort Hotel Jakarta",dest:"JAKARTA",cin:"2026-08-09",cout:"2026-08-10",costoEUR:65.60,pagato:"SI",ref:"BB26012919942463",url:"",note:"Prenotato 29/01/26 via Libero"},
@@ -756,7 +868,7 @@ function fromFirestore(d) {
 function saveFirestore(showFeedback) {
   if (!fbReady || !db) {
     setStatus('❌ DB non pronto', 'var(--coral)');
-    if (showFeedback) showToast('⚠️ Impossibile salvare: connessione cloud non pronta.', 'error');
+    if (showFeedback) showToast('⚠️ Impossibile salvare: cloud non pronto.', 'error');
     return;
   }
   
@@ -817,8 +929,6 @@ function autoSave() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(function() { saveFirestore(false); }, 1500);
 }
-
-function manualSave() { saveFirestore(true); }
 
 function setStatus(msg, color) {
   var el = document.getElementById('last-saved');
@@ -1051,6 +1161,7 @@ function runChecks() {
   
   state.days.forEach(function(d, index) {
     if (d.localita === 'MXP') return;
+    // Giorno di rientro escluso (non serve alloggio l'ultimo giorno)
     if (index === state.days.length - 1) return;
     if (d.localita && /\bTO\b/i.test(d.localita)) return;
     
@@ -1146,6 +1257,7 @@ function renderDashboard() {
   var tot = totH + totE + totT;
   var unpaid = state.hotels.filter(function(h) { return h.pagato !== 'SI'; }).length;
 
+  // Render tessere KPI pulite e minimaliste (senza pesanti fasce di colore sul bordo, rif. image_8b3462.png)
   document.getElementById('db-kpi').innerHTML =
     '<div class="kpi kpi-giorni"><div class="val">' + state.days.length + '</div><div class="lbl">Giorni</div></div>' +
     '<div class="kpi kpi-mete"><div class="val">' + dests.length + '</div><div class="lbl">Mete</div></div>' +
@@ -1246,6 +1358,7 @@ function renderDestCards() {
     var matchDay = state.days.find(function(d) { return d.localita === r.loc; });
     var clickAttr = matchDay ? 'onclick="openDayInItinerary(\'' + matchDay.id + '\')"' : '';
     
+    // Corretto in "Meta" senza accento
     html += '<div class="card" ' + clickAttr + ' style="cursor:pointer; transition: all 0.2s;" onmouseover="this.style.borderColor=\'var(--lagoon)\'; this.style.boxShadow=\'0 4px 18px rgba(14,125,163,0.15)\'" onmouseout="this.style.borderColor=\'var(--border)\'; this.style.boxShadow=\'var(--shadow)\'">' +
       '<div class="dr"><span class="dk">Meta</span><span class="dv">' + (LOC_FLAGS[r.loc]||'') + ' <strong>' + r.loc + '</strong> ➡️</span></div>' +
       '<div class="dr"><span class="dk">Arrivo</span><span class="dv">' + fmtD(sorted[0],true) + '</span></div>' +
@@ -1314,6 +1427,7 @@ function renderItinerary() {
     else if (ts.length) nodeCls += ' t-only';
     else if (hs.length) nodeCls += ' h-only';
 
+    // Generazione dinamica dei chip con i rispettivi file collegati
     var chips = '';
     ts.forEach(function(t) { chips += tipChip(t.tipo, day.data); });
     
@@ -1419,16 +1533,12 @@ function renderItinerary() {
 
     var docFile = null;
     if (DATE_DOCS[day.data]) {
-      if (typeof DATE_DOCS[day.data] === 'string') {
-        docFile = DATE_DOCS[day.data];
-      } else {
-        var obj = DATE_DOCS[day.data];
-        if (obj.transfers) {
-          docFile = Object.values(obj.transfers)[0];
-        }
-        if (!docFile && obj.hotels) {
-          docFile = Object.values(obj.hotels)[0];
-        }
+      var obj = DATE_DOCS[day.data];
+      if (obj.transfers) {
+        docFile = Object.values(obj.transfers)[0];
+      }
+      if (!docFile && obj.hotels) {
+        docFile = Object.values(obj.hotels)[0];
       }
     }
 
@@ -1890,28 +2000,6 @@ function geodesicPoints(from, to, n) {
   } return pts;
 }
 
-function importExcel(input) {
-  var file = input.files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      var wb = XLSX.read(e.target.result, {type:'array',cellDates:true});
-      var ws = wb.Sheets[wb.SheetNames[0]];
-      var rows = XLSX.utils.sheet_to_json(ws, {header:1,raw:false,dateNF:'yyyy-mm-dd'});
-      rows.forEach(function(r) {
-        if (!r[0] || !r[1]) return;
-        var dateStr = typeof r[0]==='string' && r[0].includes('-') ? r[0].substring(0,10) : (r[0] instanceof Date ? r[0].toISOString().substring(0,10) : null);
-        if (!dateStr) return;
-        if (r[2] && typeof r[2]==='string') { var d = state.days.find(function(d) { return d.data===dateStr; }); if (d) d.localita = r[2].trim().toUpperCase(); }
-      });
-      showToast('✅ Itinerario importato con successo!', 'success');
-      renderDashboard(); autoSave(); input.value='';
-    } catch(err) { showToast('Errore di importazione: ' + err.message, 'error'); }
-  };
-  reader.readAsArrayBuffer(file);
-}
-
 function exportExcelItinerary() {
   var search = (document.getElementById('it-search').value || '').toLowerCase();
   
@@ -1980,7 +2068,7 @@ function exportExcelItinerary() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  setStatus('⏳ Caricamento cloud database…', 'var(--mist)');
+  setStatus('⏳ Caricamento database…', 'var(--mist)');
   renderDashboard();
   initFilterDropdowns();
   initFirebase();
