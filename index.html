@@ -1182,17 +1182,25 @@ function parseFloatIT(val) {
 
 function runChecks() {
   var issues = [];
-  
+
+  // Giorni che non richiedono alloggio perché si viaggia di notte o si è in transito
+  var noHotelNeeded = [
+    "2026-08-08",  // Volo notturno MXP → Jakarta
+    "2026-08-29"   // Volo di rientro Jakarta → MXP
+  ];
+
   state.days.forEach(function(d, index) {
-    if (d.localita === 'MXP') return;
-    // Escludiamo il giorno di rientro (giorno 22 - 29 ago) per il quale non è necessario un alloggio
+    // Ultimo giorno: nessun alloggio necessario
     if (index === state.days.length - 1) return;
-    if (d.localita && /\bTO\b/i.test(d.localita)) return;
-    
+    // Giorni di viaggio notturno espliciti
+    if (noHotelNeeded.includes(d.data)) return;
+    // Giorni di transito (es. "JAKARTA → YOGYAKARTA"): l'alloggio è nella dest di arrivo
+    if (/→/.test(d.localita) || /\bTO\b/i.test(d.localita)) return;
+
     var h = hotelsForDate(d.data);
     if (!h.length) {
       issues.push({
-        type: 'warn', 
+        type: 'warn',
         msg: 'Giorno ' + d.giorno + ' (' + fmtD(d.data,true) + ') – <strong>' + d.localita + '</strong>: nessun alloggio attivo.'
       });
     }
@@ -1315,7 +1323,7 @@ function renderCalendar() {
     var iso = '2026-08-' + String(i).padStart(2,'0');
     var d = dayObj(iso);
     var loc = d ? d.localita : '';
-    var isTransit = loc && /\bTO\b/i.test(loc);
+    var isTransit = loc && (/→/.test(loc) || /\bTO\b/i.test(loc));
     var cls = LOC_CLASS[loc] || (isTransit ? 'c-TRANSIT' : '');
     var hs = hotelsForDate(iso);
     var ts = transfersForDate(iso);
@@ -1325,7 +1333,7 @@ function renderCalendar() {
     if (hs.length) dots += '<span class="dot dot-h"></span>';
     
     var click = d ? 'onclick="openDayInItinerary(\'' + d.id + '\')"' : '';
-    var displayLoc = isTransit ? '→' + loc.replace(/.*\bTO\b\s*/i,'').substring(0,5) : (loc ? loc.substring(0,6) : '');
+    var displayLoc = isTransit ? '→' + loc.replace(/.*→\s*/,'').substring(0,5) : (loc ? loc.substring(0,6) : '');
     
     grid.innerHTML += '<div class="cal-d ' + cls + '" ' + click + '>' +
       '<div class="dn" style="' + (dow>=5?'color:var(--coral)':'') + '">' + i + '</div>' +
@@ -1357,30 +1365,42 @@ function renderDestCards() {
   var rows = {};
   state.days.forEach(function(d) {
     var l = d.localita;
-    if (!l || l === 'MXP') return;
+    if (!l) return;
     if (!rows[l]) rows[l] = {loc:l, days:[], hotels:[]};
     rows[l].days.push(d.data);
   });
-  
+
   state.hotels.forEach(function(h) {
     Object.keys(rows).forEach(function(locKey) {
-      var possibleDests = locKey.split(/\s+TO\s+/i).map(function(s) { return s.trim().toUpperCase(); });
-      if (possibleDests.includes(h.dest.toUpperCase()) || locKey.toUpperCase() === h.dest.toUpperCase()) {
-        if (!rows[locKey].hotels.some(function(existing) { return existing.id === h.id; })) {
+      // Splitta su → (con o senza spazi) per gestire "X → Y"
+      var parts = locKey.split(/\s*→\s*|\s+TO\s+/i).map(function(s) { return s.trim().toUpperCase(); });
+      var hDest = h.dest.toUpperCase();
+      if (parts.includes(hDest) || locKey.toUpperCase() === hDest) {
+        if (!rows[locKey].hotels.some(function(ex) { return ex.id === h.id; })) {
           rows[locKey].hotels.push(h);
         }
       }
     });
   });
-  
+
   var html = '';
   Object.values(rows).forEach(function(r) {
     var sorted = r.days.sort();
-    var alloggi = r.hotels.map(function(h) { return h.nome; }).join(', ') || '<span style="color:var(--coral)">⚠️ Mancante</span>';
-    
+    var isTransit = /→/.test(r.loc) || /\bTO\b/i.test(r.loc);
+    var isMXP = r.loc.startsWith('MXP');
+    var alloggi;
+    if (isTransit || isMXP) {
+      // Giorno di transito o partenza: mostra i transfer del giorno, non cercare alloggio
+      var ts = transfersForDate(sorted[0]);
+      var tipoLabel = ts.length ? ts.map(function(t) { return (TIPO_ICON[t.tipo]||'') + ' ' + t.nome; }).join(', ') : '✈️ In transito';
+      alloggi = '<span style="color:var(--mist);font-style:italic">' + tipoLabel + '</span>';
+    } else {
+      alloggi = r.hotels.map(function(h) { return h.nome; }).join(', ') || '<span style="color:var(--coral)">⚠️ Mancante</span>';
+    }
+
     var matchDay = state.days.find(function(d) { return d.localita === r.loc; });
     var clickAttr = matchDay ? 'onclick="openDayInItinerary(\'' + matchDay.id + '\')"' : '';
-    
+
     html += '<div class="card" ' + clickAttr + ' style="cursor:pointer; transition: all 0.2s;" onmouseover="this.style.borderColor=\'var(--lagoon)\'; this.style.boxShadow=\'0 4px 18px rgba(14,125,163,0.15)\'" onmouseout="this.style.borderColor=\'var(--border)\'; this.style.boxShadow=\'var(--shadow)\'">' +
       '<div class="dr"><span class="dk">Meta</span><span class="dv">' + (LOC_FLAGS[r.loc]||'') + ' <strong>' + r.loc + '</strong> ➡️</span></div>' +
       '<div class="dr"><span class="dk">Arrivo</span><span class="dv">' + fmtD(sorted[0],true) + '</span></div>' +
@@ -1585,7 +1605,7 @@ function renderItinerary() {
         '<div class="tl-head" onclick="toggleTl(\'tlc-' + day.id + '\')">' +
           '<span class="tl-dn">G' + day.giorno + '</span>' +
           '<span class="tl-date">' + fmtD(day.data,true) + '</span>' +
-          '<span class="tl-loc">' + (LOC_FLAGS[loc] || (/\bTO\b/i.test(loc) ? '🚌' : '')) + ' ' + (loc||'—') + '</span>' +
+          '<span class="tl-loc">' + (LOC_FLAGS[loc] || (/→/.test(loc) || /\bTO\b/i.test(loc) ? '🚌' : '')) + ' ' + (loc||'—') + '</span>' +
           '<div class="tl-chips">' + chips + '</div>' +
           '<span style="color:var(--mist);margin-left:auto;font-size:14px">▾</span>' +
         '</div>' +
