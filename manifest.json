@@ -1,0 +1,20 @@
+{
+  "name": "Indonesia 2026",
+  "short_name": "Indonesia",
+  "description": "Pianificatore viaggio Indonesia agosto 2026",
+  "start_url": "/viaggio/",
+  "scope": "/viaggio/",
+  "display": "standalone",
+  "background_color": "#073b5a",
+  "theme_color": "#073b5a",
+  "orientation": "portrait-primary",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "viaggi.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
