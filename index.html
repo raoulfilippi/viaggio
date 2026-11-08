@@ -3,187 +3,184 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:wght@600;800&display=swap" rel="stylesheet">
 <style>
-/* Idea: un quaderno di storia digitale. La testata porta il righello dei secoli III-IX del libro;
-   la linea del tempo ha una corsia per capitolo e secoli di uguale larghezza. */
+/* Idea: uno studio di storia in stile "figurine": bordi spessi, ombre dure, colori pieni, tasti grandi per le dita.
+   Un colore per capitolo, uguale in tutta la pagina. Linea del tempo in verticale, niente scorrimento laterale. */
 :root{
-  --bg:#f3f5f9; --surface:#ffffff; --surface-2:#e9edf4; --fg:#18202f; --muted:#546078; --line:#d3dae6;
-  --accent:#243b78; --on-accent:#ffffff;
-  --c1:#2c7a4d; --c1-t:#dff1e6;
-  --c2:#2866ad; --c2-t:#dce9f8;
-  --c3:#bf560b; --c3-t:#fce6d3;
-  --c4:#b0306b; --c4-t:#f8dce9;
-  --on-c:#ffffff;
-  --good:#1f7a3f; --good-t:#dff1e6; --bad:#b3261e; --bad-t:#fbe3e0;
+  --bg:#eef2fb; --surface:#ffffff; --surface-2:#e0e7f6; --fg:#151a30; --muted:#4d5673;
+  --edge:#151a30; --shade:#151a30; --accent:#ffd23f; --on-accent:#151a30; --focus:#2447e0;
+  --c1:#35c47a; --c1-t:#d7f5e4;
+  --c2:#5b9bff; --c2-t:#dbe8ff;
+  --c3:#ff9140; --c3-t:#ffe4cc;
+  --c4:#f26aaa; --c4-t:#ffdbeb;
+  --on-c:#151a30;
+  --good:#17803f; --good-t:#d7f5e4; --bad:#c42b23; --bad-t:#ffe0dd;
   --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
   --f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --bw:2.5px; --r:18px;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#11151e; --surface:#192030; --surface-2:#222b3e; --fg:#eef1f7; --muted:#a0abc0; --line:#303b52;
-    --accent:#a9bdff; --on-accent:#11151e;
-    --c1:#62c48f; --c1-t:#1b3027; --c2:#76adf2; --c2-t:#1a2b44;
-    --c3:#f59d5a; --c3-t:#3b2819; --c4:#f088b5; --c4-t:#3c1f2e;
-    --on-c:#11151e;
-    --good:#6fd39a; --good-t:#1b3027; --bad:#ff948b; --bad-t:#3e2220;
+    --bg:#0e1124; --surface:#1a1f3d; --surface-2:#252b52; --fg:#f2f4ff; --muted:#b0b8dc;
+    --edge:#9aa4e6; --shade:#000000; --focus:#ffd23f;
+    --c1-t:#133a29; --c2-t:#18295a; --c3-t:#4a2a10; --c4-t:#4b1a36;
+    --good:#5fd392; --good-t:#133a29; --bad:#ff8f88; --bad-t:#4a1f1c;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#11151e; --surface:#192030; --surface-2:#222b3e; --fg:#eef1f7; --muted:#a0abc0; --line:#303b52;
-  --accent:#a9bdff; --on-accent:#11151e;
-  --c1:#62c48f; --c1-t:#1b3027; --c2:#76adf2; --c2-t:#1a2b44;
-  --c3:#f59d5a; --c3-t:#3b2819; --c4:#f088b5; --c4-t:#3c1f2e;
-  --on-c:#11151e;
-  --good:#6fd39a; --good-t:#1b3027; --bad:#ff948b; --bad-t:#3e2220;
+  --bg:#0e1124; --surface:#1a1f3d; --surface-2:#252b52; --fg:#f2f4ff; --muted:#b0b8dc;
+  --edge:#9aa4e6; --shade:#000000; --focus:#ffd23f;
+  --c1-t:#133a29; --c2-t:#18295a; --c3-t:#4a2a10; --c4-t:#4b1a36;
+  --good:#5fd392; --good-t:#133a29; --bad:#ff8f88; --bad-t:#4a1f1c;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
 body{
   background:var(--bg); color:var(--fg);
-  font:400 1rem/1.6 var(--f-body);
-  padding-block:0 3rem;
+  font:400 clamp(1.0625rem,1rem + .3vw,1.2rem)/1.6 var(--f-body);
+  padding-block:0 4rem;
   padding-left:max(16px,env(safe-area-inset-left,0px));
   padding-right:max(16px,env(safe-area-inset-right,0px));
 }
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
-.wrap{max-width:1080px;margin:0 auto}
-button{font:inherit;color:inherit;cursor:pointer}
-:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:900px;margin:0 auto}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:4px solid var(--focus);outline-offset:3px}
 .l1{--c:var(--c1);--ct:var(--c1-t)}
 .l2{--c:var(--c2);--ct:var(--c2-t)}
 .l3{--c:var(--c3);--ct:var(--c3-t)}
 .l4{--c:var(--c4);--ct:var(--c4-t)}
 
 /* Testata */
-.top{padding-block:28px 8px}
-.eyebrow{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:0 0 6px}
-h1{font:800 clamp(2rem,6vw,3.25rem)/1.05 var(--f-display);letter-spacing:-.02em;margin:0 0 12px;text-wrap:balance}
-.lead{max-width:62ch;color:var(--muted);margin:0 0 22px;font-size:1.05rem}
-.ruler{display:grid;grid-template-columns:repeat(7,1fr);max-width:620px;border-top:2px solid var(--fg)}
-.ruler span{border-left:2px solid var(--fg);padding:4px 0 0 6px;display:flex;flex-direction:column;line-height:1.15;font-family:var(--f-display);font-weight:600;font-size:.95rem}
-.ruler span:last-child{border-right:2px solid var(--fg)}
-.ruler small{font:400 .72rem var(--f-body);color:var(--muted);font-variant-numeric:tabular-nums}
+.top{padding-block:26px 4px}
+.eyebrow{display:inline-block;margin:0 0 10px;padding:3px 14px;background:var(--accent);color:var(--on-accent);border:var(--bw) solid var(--edge);border-radius:999px;font-weight:700;font-size:.85rem;letter-spacing:.04em}
+h1{font:800 clamp(2.1rem,7vw,3.6rem)/1.02 var(--f-display);letter-spacing:-.02em;margin:0 0 10px;text-wrap:balance}
+.lead{max-width:56ch;color:var(--muted);margin:0}
 
-/* Schede */
-.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;gap:6px;overflow-x:auto;background:var(--bg);padding-block:10px;border-bottom:1px solid var(--line);margin-top:14px;scrollbar-width:none}
-.tabs::-webkit-scrollbar{display:none}
-.tabs button{flex:none;border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 16px;font-weight:700;font-size:.95rem}
-.tabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
-[role="tabpanel"]{padding-block:22px}
-h2{font:700 1.5rem/1.2 var(--f-display);margin:0 0 6px;text-wrap:balance}
-.sec-head p{max-width:65ch;color:var(--muted);margin:0 0 16px}
-.btn{border:1.5px solid var(--accent);background:transparent;color:var(--accent);border-radius:10px;padding:9px 14px;font-weight:700}
+/* Navigazione */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;background:var(--bg);padding-block:12px 14px;margin-top:10px}
+.tabs button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:68px;padding:8px 4px;border:var(--bw) solid var(--edge);border-radius:16px;background:var(--surface);font-weight:700;font-size:.82rem;line-height:1.1;text-align:center;box-shadow:3px 3px 0 var(--shade)}
+.tabs svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--on-accent);transform:translate(2px,2px);box-shadow:1px 1px 0 var(--shade)}
+@media (min-width:700px){.tabs button{flex-direction:row;gap:10px;font-size:1rem;min-height:60px}}
+[role="tabpanel"]{padding-block:14px}
+h2{font:800 clamp(1.6rem,4vw,2rem)/1.15 var(--f-display);margin:0 0 8px;text-wrap:balance}
+.sec-head p{max-width:60ch;color:var(--muted);margin:0 0 18px}
+.lbl{font-weight:700;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.btn{min-height:54px;padding:10px 22px;border:var(--bw) solid var(--edge);border-radius:14px;background:var(--surface);color:var(--fg);font-weight:700;box-shadow:3px 3px 0 var(--shade)}
+.btn:active{transform:translate(3px,3px);box-shadow:none}
 .btn.solid{background:var(--accent);color:var(--on-accent)}
-.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btn[disabled]{opacity:.45;box-shadow:none;cursor:not-allowed}
+.btn[aria-pressed="true"]{background:var(--c1);color:var(--on-c)}
 
 /* Linea del tempo */
-.tl-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
-.tl{position:relative}
-.axis{position:relative;height:48px;background:var(--surface-2);border-bottom:1px solid var(--line)}
-.corner{position:sticky;left:0;z-index:3;width:var(--lw);height:100%;background:var(--surface-2);border-right:1px solid var(--line);padding:8px;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted);display:flex;align-items:flex-end}
-.cent{position:absolute;top:0;height:100%;border-left:1px solid var(--line);padding:6px 0 0 8px;display:flex;flex-direction:column;line-height:1.1}
-.cent b{font:800 1.05rem var(--f-display)}
-.cent small{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.lane{position:relative;border-bottom:1px solid var(--line);background-image:linear-gradient(to right,var(--line) 1px,transparent 1px);background-size:var(--cw) 100%;background-position:var(--lw) 0}
-.lane:last-of-type{border-bottom:0}
-.lane-label{position:sticky;left:0;z-index:3;width:var(--lw);height:100%;background:var(--ct);border-right:1px solid var(--line);padding:8px;display:flex;flex-direction:column;justify-content:center;font-size:.8rem;font-weight:700;line-height:1.2}
-.lane-label .n{display:flex;align-items:center;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
-.lane-label .dot{width:10px;height:10px;border-radius:50%;background:var(--c);margin-right:5px;flex:none}
-.ev{position:absolute;z-index:2;height:24px;display:flex;align-items:center;gap:6px;padding:0;background:none;border:0;white-space:nowrap;font-size:.8125rem}
-.ev .mk{flex:none;height:20px;min-width:20px;border-radius:10px;background:var(--c);border:2px solid var(--c)}
-.ev .mk.in{display:flex;align-items:center;padding:0 8px;font-weight:700;color:var(--on-c);overflow:hidden;text-overflow:ellipsis}
-.ev.approx .mk{background:var(--ct);border:2px dashed var(--c)}
-.ev.approx .mk.in{color:var(--fg)}
-.ev:hover .mk{filter:brightness(1.12)}
-.ev:focus-visible{outline:none}
-.ev[aria-pressed="true"] .mk,.ev:focus-visible .mk{box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--fg)}
-.ev[aria-pressed="true"] .lb{font-weight:700}
-.guide{position:absolute;top:0;bottom:0;width:2px;background:var(--fg);opacity:.28;z-index:1;pointer-events:none}
-.legend{display:flex;flex-wrap:wrap;gap:6px 20px;list-style:none;padding:0;margin:12px 0 18px;font-size:.85rem;color:var(--muted)}
-.sw{display:inline-block;width:24px;height:12px;border-radius:6px;vertical-align:-1px;margin-right:6px;background:var(--fg)}
-.sw.dot{width:12px}
-.sw.dash{background:transparent;border:2px dashed var(--fg)}
-
-/* Scheda dell'evento */
-.detail{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.d-head{background:var(--ct);display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;padding:16px 20px}
-.d-date{font:800 2.1rem/1 var(--f-display);color:var(--c);margin:0;font-variant-numeric:tabular-nums}
-.chip{font-size:.8rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
-.d-body{padding:18px 20px 6px}
-.d-body h3{font:700 1.35rem/1.25 var(--f-display);margin:0 0 8px;text-wrap:balance}
-.d-body p{max-width:65ch;margin:0 0 12px}
-.why{background:var(--surface-2);border-radius:10px;padding:12px 14px}
-.d-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 20px 18px;flex-wrap:wrap}
-.count{font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.strip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:0 0 18px}
+.sb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px;min-height:76px;border:var(--bw) solid var(--edge);border-radius:14px;background:var(--surface);box-shadow:2px 2px 0 var(--shade)}
+.sb b{font:800 1.2rem/1.1 var(--f-display)}
+.sb small{font-size:.68rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.sb:active{transform:translate(2px,2px);box-shadow:none}
+.sb[disabled]{opacity:.35;box-shadow:none;cursor:default}
+.dots{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;min-height:11px}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--c);border:1.5px solid var(--edge)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.chipbtn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:6px 16px;border:var(--bw) solid var(--edge);border-radius:999px;background:var(--surface);font-weight:700;font-size:.95rem}
+.chipbtn .dot{width:14px;height:14px;border-radius:50%;background:var(--c);border:2px solid var(--edge)}
+.chipbtn[aria-pressed="true"]{background:var(--c,var(--accent));color:var(--on-c)}
+.cs{scroll-margin-top:110px}
+.cb{display:flex;align-items:center;flex-wrap:wrap;gap:6px 14px;margin:26px 0 14px}
+.rom{font:800 1.6rem/1.2 var(--f-display);background:var(--fg);color:var(--bg);padding:2px 16px;border-radius:999px}
+.yrs{color:var(--muted);font-weight:700}
+.evs{border-left:4px solid var(--edge);margin-left:14px;padding-left:20px;display:grid;gap:16px}
+details.ev{position:relative;background:var(--ct);border:var(--bw) solid var(--edge);border-radius:var(--r);box-shadow:4px 4px 0 var(--shade)}
+details.ev::before{content:"";position:absolute;left:-31px;top:28px;width:18px;height:18px;border-radius:50%;background:var(--c);border:var(--bw) solid var(--edge)}
+details.ev summary{list-style:none;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 16px;cursor:pointer;min-height:92px}
+details summary::-webkit-details-marker{display:none}
+.yr{min-width:6.2rem;max-width:7.6rem;text-align:center;font:800 1.25rem/1.1 var(--f-display);background:var(--c);color:var(--on-c);border:var(--bw) solid var(--edge);border-radius:12px;padding:12px 8px;font-variant-numeric:tabular-nums}
+.tx{min-width:0}
+.chip{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.03em;background:var(--c);color:var(--on-c);border-radius:999px;padding:1px 10px}
+.tt{display:block;font:800 1.2rem/1.2 var(--f-display);margin:6px 0 2px}
+.sh{display:block}
+.plus{flex:none;width:34px;height:34px;border-radius:50%;border:var(--bw) solid var(--edge);background:var(--surface);position:relative}
+.plus::before,.plus::after{content:"";position:absolute;left:50%;top:50%;width:14px;height:3px;background:var(--fg);transform:translate(-50%,-50%);border-radius:2px}
+.plus::after{transform:translate(-50%,-50%) rotate(90deg)}
+details[open]>summary .plus::after{display:none}
+.more{margin:0 16px;padding:14px 0 18px;border-top:var(--bw) dashed var(--edge)}
+.more p{margin:0 0 12px;max-width:62ch}
+.why{background:var(--surface);border:var(--bw) solid var(--edge);border-radius:12px;padding:12px 14px}
+@media (max-width:520px){.yr{min-width:4.8rem;font-size:1.05rem;padding:10px 6px}.evs{padding-left:16px}details.ev::before{left:-27px}}
 
 /* Capitoli */
-.map{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));margin-bottom:28px}
-.grp{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;min-width:0}
-.grp>h3{margin:0;padding:10px 14px;background:var(--c);color:var(--on-c);font:700 1.05rem var(--f-display)}
+details.chap{background:var(--ct);border:var(--bw) solid var(--edge);border-radius:var(--r);box-shadow:4px 4px 0 var(--shade);margin-bottom:18px}
+details.chap summary{list-style:none;display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;min-height:84px}
+.num{flex:none;width:50px;height:50px;border-radius:50%;background:var(--c);color:var(--on-c);border:var(--bw) solid var(--edge);display:grid;place-items:center;font:800 1.45rem var(--f-display)}
+.ttl{display:block;font:800 1.2rem/1.2 var(--f-display)}
+.insum{display:block;margin-top:2px}
+.cwho{flex:1;min-width:0}
+details.chap .body{margin:0 18px;padding:14px 0 16px;border-top:var(--bw) dashed var(--edge)}
+details.chap ul{margin:0;padding-left:1.2rem;max-width:62ch}
+details.chap li{margin-bottom:8px}
+details.chap li::marker{color:var(--fg)}
+details.mapwrap{border:var(--bw) solid var(--edge);border-radius:var(--r);background:var(--surface);margin-top:8px}
+details.mapwrap summary{list-style:none;display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;font:800 1.1rem var(--f-display);min-height:64px}
+details.mapwrap summary span.t{flex:1}
+details.mapwrap .map{padding:4px 16px 16px}
+.map{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.grp{background:var(--ct);border:var(--bw) solid var(--edge);border-radius:14px;overflow:hidden;min-width:0}
+.grp>h3{margin:0;padding:10px 14px;background:var(--c);color:var(--on-c);border-bottom:var(--bw) solid var(--edge);font:800 1.05rem var(--f-display)}
 .blk{padding:12px 14px 6px}
-.blk+.blk{border-top:1px solid var(--line)}
-.blk h4{margin:0 0 8px;font-size:.85rem;color:var(--muted);font-weight:700}
+.blk+.blk{border-top:var(--bw) dashed var(--edge)}
+.blk h4{margin:0 0 8px;font-size:.9rem;font-weight:700}
 .blk ul{list-style:none;margin:0;padding:0}
 .blk li{margin-bottom:8px}
-.rel{display:block;font-size:.8rem;color:var(--muted);margin:2px 0 2px}
-.pill{display:block;border:1.5px solid var(--c);background:var(--ct);border-radius:8px;padding:6px 10px;font-size:.92rem;line-height:1.4}
-h2.sub{font-size:1.25rem;margin:0 0 12px}
-details.chap{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:10px}
-details.chap summary{list-style:none;display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer}
-details.chap summary::-webkit-details-marker{display:none}
-details.chap summary::after{content:"";margin-left:auto;flex:none;width:10px;height:10px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .15s}
-details.chap[open] summary::after{transform:rotate(225deg)}
-.num{flex:none;width:34px;height:34px;border-radius:50%;background:var(--c);color:var(--on-c);display:grid;place-items:center;font:800 1.1rem var(--f-display)}
-.ttl{font:700 1.05rem/1.25 var(--f-display);display:block}
-.insum{display:block;color:var(--muted);font-size:.9rem;margin-top:2px}
-details.chap .body{padding:0 18px 14px 62px}
-details.chap ul{margin:0;padding-left:1.1rem;max-width:65ch}
-details.chap li{margin-bottom:6px}
-details.chap li::marker{color:var(--c)}
+.rel{display:block;font-size:.85rem;color:var(--muted);margin:2px 0}
+.pill{display:block;border:2px solid var(--edge);background:var(--surface);border-radius:10px;padding:6px 10px;font-size:.95rem;line-height:1.4}
 
 /* Parole */
-.fc{max-width:560px}
-.fc-meta{color:var(--muted);font-size:.9rem;margin:0 0 10px;font-variant-numeric:tabular-nums}
-.card{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:12px;width:100%;min-height:250px;text-align:left;padding:24px;background:var(--ct);border:1.5px solid var(--c);border-radius:14px}
+.fc{max-width:620px}
+.fc-meta{color:var(--muted);font-weight:700;margin:0 0 12px;font-variant-numeric:tabular-nums}
+.card{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:14px;width:100%;min-height:320px;text-align:left;padding:26px;background:var(--ct);border:var(--bw) solid var(--edge);border-radius:22px;box-shadow:6px 6px 0 var(--shade)}
 .card.back{background:var(--surface)}
-.card .term{font:800 clamp(2rem,9vw,2.9rem)/1.05 var(--f-display);overflow-wrap:anywhere}
-.card .def{font-size:1.15rem;line-height:1.5}
-.card .hint{font-size:.85rem;color:var(--muted)}
-.fc-actions,.fc-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.fc-actions .btn{flex:1 1 0;min-width:0}
-.btn[aria-pressed="true"]{background:var(--good);border-color:var(--good);color:var(--on-c)}
+.card:active{transform:translate(3px,3px);box-shadow:3px 3px 0 var(--shade)}
+.card .term{font:800 clamp(2.4rem,10vw,3.6rem)/1.02 var(--f-display);overflow-wrap:anywhere}
+.card .def{font-size:1.25rem;line-height:1.5}
+.card .hint{font-size:.9rem;color:var(--muted);font-weight:700}
+.fc-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:20px}
+.fc-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.fc-actions .btn{min-width:0;padding-inline:8px}
 
-/* Quiz e ordinamento */
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;max-width:720px}
-.bar{height:8px;background:var(--surface-2);border-radius:4px;overflow:hidden;margin:6px 0 16px}
+/* Quiz */
+.panel{background:var(--surface);border:var(--bw) solid var(--edge);border-radius:22px;box-shadow:6px 6px 0 var(--shade);padding:20px;max-width:720px}
+.bar{height:14px;background:var(--surface-2);border:2px solid var(--edge);border-radius:8px;overflow:hidden;margin:8px 0 18px}
 .bar i{display:block;height:100%;background:var(--accent)}
-.q-meta{display:flex;justify-content:space-between;gap:10px;font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.q-text{font:700 1.2rem/1.35 var(--f-display);margin:0 0 14px;text-wrap:balance}
-.opt{display:block;width:100%;text-align:left;padding:12px 14px;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;margin-bottom:8px}
-button.opt:hover:not([disabled]){border-color:var(--accent)}
+.q-meta{display:flex;justify-content:space-between;gap:10px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.q-text{font:800 1.35rem/1.3 var(--f-display);margin:0 0 16px;text-wrap:balance}
+.opt{display:block;width:100%;text-align:left;padding:14px 16px;min-height:60px;border:var(--bw) solid var(--edge);background:var(--surface);color:var(--fg);border-radius:14px;margin-bottom:10px;box-shadow:3px 3px 0 var(--shade)}
+button.opt:active:not([disabled]){transform:translate(3px,3px);box-shadow:none}
 .opt[disabled]{cursor:default}
-.opt.right{border-color:var(--good);background:var(--good-t)}
-.opt.wrong{border-color:var(--bad);background:var(--bad-t)}
-.opt .tag{font-weight:700;font-size:.8rem;margin-right:8px}
-.fb{margin:12px 0;padding:12px 14px;border-radius:10px;background:var(--surface-2)}
+.opt.right{background:var(--good-t);border-color:var(--good)}
+.opt.wrong{background:var(--bad-t);border-color:var(--bad)}
+.opt .tag{font-weight:700;font-size:.85rem;margin-right:8px}
+.fb{margin:14px 0;padding:14px 16px;border-radius:14px;background:var(--surface-2);border:var(--bw) solid var(--edge)}
 .fb strong{display:block;margin-bottom:2px}
-.res-score{font:800 2.6rem/1 var(--f-display);margin:0 0 6px;font-variant-numeric:tabular-nums}
+.res-score{font:800 3.2rem/1 var(--f-display);margin:0 0 8px;font-variant-numeric:tabular-nums}
 .miss{margin:14px 0;padding:0;list-style:none}
-.miss li{padding:10px 0;border-top:1px solid var(--line)}
+.miss li{padding:12px 0;border-top:2px dashed var(--edge)}
 .miss small{display:block;color:var(--muted)}
-.od-msg{font-weight:700;margin:0 0 12px;max-width:65ch;min-height:1.6em}
-.od-list{list-style:none;margin:0;padding:0;max-width:640px}
-.od-list li{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;margin-bottom:8px;user-select:none;-webkit-user-select:none}
-.grip{flex:none;width:44px;height:44px;display:grid;place-items:center;border-radius:8px;background:var(--surface-2);color:var(--muted);cursor:grab;touch-action:none}
-.grip::before{content:"";width:14px;height:21px;background:radial-gradient(circle,currentColor 1.7px,transparent 2.2px) 0 0/7px 7px}
-.od-t{flex:1;min-width:0}
-.od-yr{flex:none;font:800 .9rem var(--f-display);font-variant-numeric:tabular-nums}
-.od-btns{flex:none;display:flex;flex-direction:column;gap:2px}
-.mv{border:1px solid var(--line);background:var(--surface);border-radius:6px;width:32px;height:24px;line-height:1;font-size:.85rem;padding:0}
-.od-list li.dragging{box-shadow:0 6px 18px rgba(0,0,0,.25);border-color:var(--accent);cursor:grabbing}
-.od-list li.ok{border-color:var(--good);background:var(--good-t)}
-.od-list li.no{border-color:var(--bad);background:var(--bad-t)}
-.foot{margin-top:28px;color:var(--muted);font-size:.85rem;max-width:65ch}
+
+/* Ordina */
+.od-msg{font-weight:700;margin:0 0 14px;max-width:62ch;min-height:1.6em}
+.od-list{list-style:none;margin:0;padding:0;max-width:680px}
+.od-list li{display:flex;align-items:center;gap:12px;padding:10px 12px;min-height:72px;border:var(--bw) solid var(--edge);background:var(--surface);border-radius:16px;margin-bottom:12px;box-shadow:3px 3px 0 var(--shade);user-select:none;-webkit-user-select:none}
+.grip{flex:none;width:52px;height:52px;display:grid;place-items:center;border-radius:12px;background:var(--accent);color:var(--on-accent);border:var(--bw) solid var(--edge);cursor:grab;touch-action:none}
+.grip::before{content:"";width:16px;height:24px;background:radial-gradient(circle,currentColor 1.9px,transparent 2.4px) 0 0/8px 8px}
+.od-t{flex:1;min-width:0;font-weight:700}
+.od-yr{flex:none;font:800 .95rem var(--f-display);font-variant-numeric:tabular-nums;text-align:right;max-width:5.5rem}
+.od-btns{flex:none;display:flex;flex-direction:column;gap:4px}
+.mv{border:2px solid var(--edge);background:var(--surface);border-radius:8px;width:40px;height:28px;line-height:1;font-size:.95rem;padding:0}
+.od-list li.dragging{box-shadow:7px 7px 0 var(--shade);transform:scale(1.02);cursor:grabbing}
+.od-list li.ok{background:var(--good-t);border-color:var(--good)}
+.od-list li.no{background:var(--bad-t);border-color:var(--bad)}
+.foot{margin-top:32px;color:var(--muted);font-size:.9rem;max-width:62ch}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 
@@ -191,57 +188,56 @@ button.opt:hover:not([disabled]){border-color:var(--accent)}
   <header class="top">
     <p class="eyebrow">Storia · Prima media · Unità 1</p>
     <h1>I primi secoli del Medioevo</h1>
-    <p class="lead">Dal declino dell'Europa alla civiltà islamica, dal III al IX secolo. Esplora la linea del tempo, ripassa le parole e metti alla prova quello che hai imparato.</p>
-    <div class="ruler" aria-hidden="true">
-      <span>III<small>200</small></span><span>IV<small>300</small></span><span>V<small>400</small></span><span>VI<small>500</small></span><span>VII<small>600</small></span><span>VIII<small>700</small></span><span>IX<small>800</small></span>
-    </div>
+    <p class="lead">Dal declino dell'Europa alla civiltà islamica. Scorri la linea del tempo, ripassa le parole e metti alla prova quello che sai.</p>
   </header>
 
   <nav class="tabs" role="tablist" aria-label="Sezioni">
-    <button role="tab" id="t-timeline" aria-controls="p-timeline" aria-selected="true">Linea del tempo</button>
-    <button role="tab" id="t-chapters" aria-controls="p-chapters" aria-selected="false" tabindex="-1">Capitoli</button>
-    <button role="tab" id="t-words" aria-controls="p-words" aria-selected="false" tabindex="-1">Parole</button>
-    <button role="tab" id="t-quiz" aria-controls="p-quiz" aria-selected="false" tabindex="-1">Quiz</button>
-    <button role="tab" id="t-order" aria-controls="p-order" aria-selected="false" tabindex="-1">Ordina</button>
+    <button role="tab" id="t-timeline" aria-controls="p-timeline" aria-selected="true">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v18"/><circle cx="7" cy="7" r="2"/><circle cx="7" cy="12" r="2"/><circle cx="7" cy="17" r="2"/><path d="M13 7h7M13 12h5M13 17h7"/></svg>
+      <span>Linea del tempo</span></button>
+    <button role="tab" id="t-chapters" aria-controls="p-chapters" aria-selected="false" tabindex="-1">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h10"/></svg>
+      <span>Capitoli</span></button>
+    <button role="tab" id="t-words" aria-controls="p-words" aria-selected="false" tabindex="-1">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="8" width="13" height="12" rx="2"/><path d="M8 4h11a1 1 0 0 1 1 1v11"/></svg>
+      <span>Parole</span></button>
+    <button role="tab" id="t-quiz" aria-controls="p-quiz" aria-selected="false" tabindex="-1">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17.2v.1"/></svg>
+      <span>Quiz</span></button>
+    <button role="tab" id="t-order" aria-controls="p-order" aria-selected="false" tabindex="-1">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 20V4M4.5 7.5 8 4l3.5 3.5M16 4v16M12.5 16.5 16 20l3.5-3.5"/></svg>
+      <span>Ordina</span></button>
   </nav>
 
   <section id="p-timeline" role="tabpanel" aria-labelledby="t-timeline">
     <div class="sec-head">
       <h2>Linea del tempo</h2>
-      <p>Tocca un evento per leggerne la storia. Ogni corsia è un capitolo e tutti i secoli hanno la stessa larghezza, come nella linea del libro. Scorri di lato per vedere tutto.</p>
+      <p>Scorri verso il basso: gli eventi sono in ordine di tempo. Tocca una scheda per leggere la storia. Il colore ti dice a quale capitolo appartiene.</p>
     </div>
-    <div class="tl-scroll" id="tlScroll" tabindex="0" aria-label="Linea del tempo, scorri di lato">
-      <div class="tl" id="tl"></div>
-    </div>
-    <ul class="legend">
-      <li><span class="sw dot"></span>Punto: una data precisa</li>
-      <li><span class="sw"></span>Barra: un periodo</li>
-      <li><span class="sw dash"></span>Tratteggio: data indicativa o secolo</li>
-    </ul>
-    <article class="detail" id="detail">
-      <div id="dBody" aria-live="polite"></div>
-      <div class="d-nav">
-        <button class="btn" id="prev">← Prima</button>
-        <span class="count" id="count"></span>
-        <button class="btn solid" id="next">Dopo →</button>
-      </div>
-    </article>
+    <p class="lbl">Salta a un secolo</p>
+    <div class="strip" id="strip"></div>
+    <p class="lbl">Mostra</p>
+    <div class="chips" id="chips"></div>
+    <p style="margin:0 0 6px"><button class="btn" id="toggleAll">Apri tutte le schede</button></p>
+    <div id="tlist"></div>
   </section>
 
   <section id="p-chapters" role="tabpanel" aria-labelledby="t-chapters" hidden>
     <div class="sec-head">
-      <h2>La mappa dell'unità</h2>
-      <p>Tre mondi, tre storie diverse: a ogni freccia corrisponde una causa o una conseguenza.</p>
+      <h2>I quattro capitoli in breve</h2>
+      <p>Tocca un capitolo per aprire i punti più importanti.</p>
     </div>
-    <div class="map" id="map"></div>
-    <h2 class="sub">I quattro capitoli in breve</h2>
     <div id="chaps"></div>
+    <details class="mapwrap">
+      <summary><span class="t">La mappa dell'unità</span><span class="plus" aria-hidden="true"></span></summary>
+      <div class="map" id="map"></div>
+    </details>
   </section>
 
   <section id="p-words" role="tabpanel" aria-labelledby="t-words" hidden>
     <div class="sec-head">
       <h2>Le parole da ricordare</h2>
-      <p>Leggi la parola, prova a spiegarla a voce, poi tocca la scheda per controllare. Segna con «Lo so» quelle che hai capito.</p>
+      <p>Leggi la parola e prova a spiegarla a voce. Poi tocca la scheda per controllare e segna «Lo so» se l'avevi capita.</p>
     </div>
     <div class="fc">
       <p class="fc-meta" id="fcMeta"></p>
@@ -269,21 +265,20 @@ button.opt:hover:not([disabled]){border-color:var(--accent)}
   <section id="p-order" role="tabpanel" aria-labelledby="t-order" hidden>
     <div class="sec-head">
       <h2>Metti in ordine</h2>
-      <p>Trascina gli eventi con la maniglia a sinistra per metterli in ordine, dal più antico in alto al più recente in basso. Se preferisci, usa le frecce a destra.</p>
+      <p>Trascina gli eventi con la maniglia gialla, dal più antico in alto al più recente in basso. Se preferisci, usa le frecce a destra.</p>
     </div>
     <p class="od-msg" id="odMsg" aria-live="polite"></p>
     <ol class="od-list" id="odList"></ol>
-    <p class="fc-row"><button class="btn solid" id="odCheck">Controlla</button><button class="btn" id="odReset">Mescola e ricomincia</button></p>
+    <div class="fc-row"><button class="btn solid" id="odCheck">Controlla</button><button class="btn" id="odReset">Mescola e ricomincia</button></div>
   </section>
 
-  <p class="foot">Contenuti ricavati dall'Unità 1 del libro di storia, pagine 20–41. Le date segnate con il tratteggio indicano periodi o secoli, non anni precisi.</p>
+  <p class="foot">Contenuti ricavati dall'Unità 1 del libro di storia, pagine 20–41. Quando il libro indica solo il secolo, la scheda dice per esempio «inizio VII sec.».</p>
 </div>
 
 <script>
 (function(){
 "use strict";
 
-/* ---------- Dati ---------- */
 const LANES=[
   {id:1,name:"Europa e Chiesa",short:"Cap. 1"},
   {id:2,name:"Impero bizantino",short:"Cap. 2"},
@@ -292,75 +287,75 @@ const LANES=[
 ];
 
 const EVENTS=[
- {id:"pop",lane:1,start:200,end:600,approx:true,label:"Dal III sec.: la popolazione cala",date:"Dal III secolo",
+ {id:"pop",cent:3,yr:"dal III sec.",short:"Con guerre, carestie ed epidemie la gente diventa sempre meno numerosa.",lane:1,start:200,end:600,approx:true,label:"Dal III sec.: la popolazione cala",date:"Dal III secolo",
   title:"La popolazione europea diminuisce",
   text:"Invasioni, saccheggi, carestie ed epidemie peggiorano la vita in Occidente. Le città si svuotano, i commerci rallentano e la moneta quasi scompare: molti tornano al baratto. Boschi e paludi riprendono le terre che erano coltivate. Secondo il grafico del libro, gli abitanti dell'Europa scendono da 44 milioni (anno 200) a 22 milioni (anno 600).",
   why:"È il punto di partenza dell'unità: senza questo declino non si capisce perché la Chiesa diventa così importante."},
- {id:"vesc",lane:1,start:400,end:599,approx:true,label:"V–VI sec.: i vescovi governano",date:"Fra V e VI secolo",
+ {id:"vesc",cent:5,yr:"V–VI sec.",short:"Senza l'impero, sono i vescovi a occuparsi delle città.",lane:1,start:400,end:599,approx:true,label:"V–VI sec.: i vescovi governano",date:"Fra V e VI secolo",
   title:"I vescovi prendono compiti di governo",
   text:"Quando il potere imperiale scompare, in Italia i vescovi fanno restaurare gli edifici pubblici, organizzano la difesa delle città e fanno da mediatori fra romani e barbari. La Chiesa usa il suo patrimonio, cioè le terre e le ricchezze donate dai fedeli, per aiutare vedove, orfani e poveri.",
   why:"Mostra come la Chiesa riempie il vuoto lasciato dall'impero."},
- {id:"giust",lane:2,start:527,end:565,label:"527–565 Giustiniano",date:"527–565",
+ {id:"giust",cent:6,yr:"527–565",short:"L'imperatore d'Oriente raccoglie le leggi in un codice e vuole riunire l'impero.",lane:2,start:527,end:565,label:"527–565 Giustiniano",date:"527–565",
   title:"Giustiniano, imperatore d'Oriente",
   text:"Nel 527 Giustiniano diventa imperatore. Fa raccogliere le leggi dell'antico impero romano in un codice e vuole restaurare l'autorità imperiale sui territori caduti in mano ai barbari. Mentre l'Occidente è diviso in tanti regni, l'impero d'Oriente è unito e prospero, con Costantinopoli come capitale. Giustiniano muore nel 565 e inizia un lungo periodo di instabilità.",
   why:"Il codice di Giustiniano resterà fondamentale per il diritto di molti Paesi."},
- {id:"greco",lane:2,start:535,end:553,label:"535–553 Guerra greco-gotica",date:"535–553",
+ {id:"greco",cent:6,yr:"535–553",short:"I bizantini vincono gli ostrogoti, ma l'Italia ne esce distrutta.",lane:2,start:535,end:553,label:"535–553 Guerra greco-gotica",date:"535–553",
   title:"La guerra greco-gotica",
   text:"I bizantini combattono contro gli ostrogoti sulla penisola italiana e vincono. La guerra devasta gran parte dell'Italia, che diventa una provincia dell'impero bizantino con capitale Ravenna. Giustiniano riprende anche l'Africa, sconfiggendo i vandali, e strappa ai visigoti parte della Spagna meridionale, che però presto andrà perduta.",
   why:"Dopo la guerra l'Italia è bizantina, ma sarà presto divisa di nuovo dall'arrivo dei longobardi."},
- {id:"long",lane:3,start:568,label:"568 I longobardi in Italia",date:"568",
+ {id:"long",cent:6,yr:"568",short:"Un popolo di guerrieri attraversa le Alpi e conquista gran parte dell'Italia.",lane:3,start:568,label:"568 I longobardi in Italia",date:"568",
   title:"I longobardi entrano in Italia",
   text:"Circa 150 000 longobardi, guidati dal re Alboino, passano le Alpi Giulie nella primavera del 568. Arrivano con carri carichi di masserizie e del bottino delle razzie. Conquistano gran parte del Nord e parti del Centro. Ai bizantini restano la costa adriatica da Ravenna ad Ancona, il ducato di Roma e gran parte del Sud con le isole.",
   why:"L'Italia si divide in due: Romània (bizantina) e Longobardia. Da questi nomi derivano Romagna e Lombardia."},
- {id:"greg",lane:1,start:590,end:604,label:"590–604 Gregorio Magno",date:"590–604",
+ {id:"greg",cent:6,yr:"590–604",short:"Il papa difende Roma e diventa il capo della Chiesa d'occidente.",lane:1,start:590,end:604,label:"590–604 Gregorio Magno",date:"590–604",
   title:"Papa Gregorio Magno guida Roma",
   text:"Il papa Gregorio Magno dirige la resistenza di Roma contro i longobardi, governa la città e organizza i rifornimenti di viveri. A poco a poco il papa di Roma, successore dell'apostolo Pietro, diventa il capo riconosciuto di tutta la Chiesa d'occidente.",
   why:"Un papa che fa anche il governante: la Chiesa diventa un vero potere."},
- {id:"teod",lane:3,start:590,approx:true,label:"Fine VI sec.: Teodolinda",date:"Fine del VI secolo",
+ {id:"teod",cent:6,yr:"fine VI sec.",short:"La regina Teodolinda convince il suo popolo a farsi cattolico.",lane:3,start:590,approx:true,label:"Fine VI sec.: Teodolinda",date:"Fine del VI secolo",
   title:"I longobardi diventano cattolici",
   text:"Per iniziativa della regina Teodolinda, i longobardi, che erano cristiani ma conservavano tradizioni pagane, si convertono al cattolicesimo. A poco a poco abbandonano anche la loro lingua germanica e adottano il latino.",
   why:"Stessa religione e stessa lingua avvicinano vincitori e vinti."},
- {id:"v7",lane:2,start:600,approx:true,label:"Inizio VII sec.: nuovi nemici",date:"Inizio del VII secolo",
+ {id:"v7",cent:7,yr:"inizio VII sec.",short:"Slavi, bulgari, àvari, sasanidi e arabi minacciano l'impero.",lane:2,start:600,approx:true,label:"Inizio VII sec.: nuovi nemici",date:"Inizio del VII secolo",
   title:"L'impero bizantino è sotto attacco",
   text:"Dopo la morte di Giustiniano l'impero è attaccato da più parti. Nei Balcani arrivano slavi, bulgari e àvari, che minacciano la stessa capitale. A oriente i re sasanidi occupano territori a sud-est, ma i bizantini riescono a respingerli. Da sud avanzano gli arabi.",
   why:"L'impero si indebolisce proprio mentre nasce una nuova potenza, quella araba."},
- {id:"mao",lane:4,start:610,label:"610 Maometto predica",date:"610 circa",
+ {id:"mao",cent:7,yr:"610",short:"Alla Mecca un mercante annuncia la fede in un solo dio: Allah.",lane:4,start:610,label:"610 Maometto predica",date:"610 circa",
   title:"Maometto comincia a predicare",
   text:"Alla Mecca un mercante di nome Maometto comincia a diffondere un nuovo messaggio, presentandosi come profeta. Predica la fede in un unico dio, Allah. La nuova religione si chiama islam, che in arabo significa «sottomissione»; i suoi fedeli si chiamano musulmani.",
   why:"È l'inizio della religione islamica."},
- {id:"egira",lane:4,start:622,label:"622 Egira",date:"622",
+ {id:"egira",cent:7,yr:"622",short:"Maometto va a Medina: da qui i musulmani contano gli anni.",lane:4,start:622,label:"622 Egira",date:"622",
   title:"L'egira: da Mecca a Medina",
   text:"Maometto viene perseguitato perché la sua religione nega valore alle divinità tradizionali. Lascia la Mecca e con i suoi seguaci si rifugia a Medina. Questo trasferimento si chiama egira, «spostamento» in arabo. A Medina Maometto forma con la sua predicazione la comunità dei fedeli, l'umma.",
   why:"Da questa data i musulmani contano gli anni, come i cristiani dalla nascita di Cristo."},
- {id:"mecca",lane:4,start:630,label:"630 Conquista della Mecca",date:"630",
+ {id:"mecca",cent:7,yr:"630",short:"Maometto conquista la Mecca e impone l'islam.",lane:4,start:630,label:"630 Conquista della Mecca",date:"630",
   title:"Maometto conquista la Mecca",
   text:"Nel 630 Maometto conquista la Mecca e impone la fede islamica. Nella città si trova la Ka'ba, un santuario a forma di cubo che custodisce la pietra nera, già sacra per gli arabi prima dell'islam.",
   why:"Maometto è insieme capo religioso, politico e militare."},
- {id:"rotari",lane:3,start:643,label:"643 Editto di Rotari",date:"643",
+ {id:"rotari",cent:7,yr:"643",short:"Le leggi dei longobardi vengono scritte in latino.",lane:3,start:643,label:"643 Editto di Rotari",date:"643",
   title:"L'editto di Rotari",
   text:"Il re Rotari fa mettere per iscritto, in latino, le leggi longobarde, che fino ad allora si tramandavano solo a voce. Pavia è la capitale del regno. L'editto prova a sostituire la vendetta privata (la faida) con un risarcimento in denaro stabilito dalla legge, il guidrigildo, che dipende dalla gravità del danno e dalla condizione della vittima.",
   why:"Le pene cambiavano secondo chi era la vittima. Oggi, invece, tutti sono uguali davanti alla legge."},
- {id:"omay",lane:4,start:661,label:"661 Omayyadi a Damasco",date:"661",
+ {id:"omay",cent:7,yr:"661",short:"La capitale dell'impero islamico diventa Damasco.",lane:4,start:661,label:"661 Omayyadi a Damasco",date:"661",
   title:"Gli Omayyadi governano da Damasco",
   text:"Prende il potere la dinastia degli Omayyadi, che pone la capitale a Damasco, in Siria, e dura fino al 750. I califfi, successori di Maometto, hanno già conquistato Siria, Palestina con Gerusalemme, Persia ed Egitto, favoriti dall'impeto della nuova fede e dalla debolezza di bizantini e persiani.",
   why:"Nell'impero islamico politica e religione formano una cosa sola."},
- {id:"spagna",lane:4,start:710,approx:true,label:"Inizio VIII sec.: la Spagna",date:"Inizio dell'VIII secolo",
+ {id:"spagna",cent:8,yr:"inizio VIII sec.",short:"Gli arabi attraversano l'Africa del Nord e arrivano in Spagna.",lane:4,start:710,approx:true,label:"Inizio VIII sec.: la Spagna",date:"Inizio dell'VIII secolo",
   title:"Gli arabi arrivano in Spagna",
   text:"L'impero si espande lungo le coste africane del Mediterraneo fino allo stretto di Gibilterra. All'inizio dell'VIII secolo gli arabi risalgono la penisola iberica. L'avanzata è spesso favorita dai popoli conquistati: stanchi di tasse e sfruttamento, guardano con speranza ai nuovi arrivati, che lasciano loro la libertà di religione.",
   why:"In Europa gli arabi occupano quasi tutta la Spagna."},
- {id:"abb",lane:4,start:750,label:"750 Abbasidi a Baghdad",date:"750",
+ {id:"abb",cent:8,yr:"750",short:"La capitale si sposta da Damasco a Baghdad.",lane:4,start:750,label:"750 Abbasidi a Baghdad",date:"750",
   title:"Gli Abbasidi spostano la capitale a Baghdad",
   text:"Una rivolta in Persia porta al potere la dinastia persiana degli Abbasidi, che trasferiscono la capitale a Baghdad. Già dopo la morte di Maometto c'erano state divisioni e scontri sanguinosi, perché i musulmani si erano divisi in sostenitori e oppositori di Alì.",
   why:"L'impero resta immenso, ma è indebolito da lotte civili."},
- {id:"franchi",lane:3,start:774,label:"774 Fine del regno",date:"774",
+ {id:"franchi",cent:8,yr:"774",short:"I franchi mettono fine al regno longobardo nel Nord e nel Centro.",lane:3,start:774,label:"774 Fine del regno",date:"774",
   title:"I franchi sconfiggono i longobardi",
   text:"Verso la metà dell'VIII secolo i longobardi tentano di conquistare i territori bizantini, Ravenna compresa. Questo tentativo provoca l'intervento militare dei franchi, che nel 774 pongono fine al regno longobardo nell'Italia centro-settentrionale. Il dominio longobardo sopravvive nel Sud fino all'XI secolo.",
   why:"Dei longobardi restano molte tracce nell'italiano: parole, nomi di persona e nomi di luogo."},
- {id:"harun",lane:4,start:786,end:809,label:"786–809 Harun al-Rashid",date:"786–809",
+ {id:"harun",cent:8,yr:"786–809",short:"È l'età d'oro: commerci, scienze e arti fioriscono.",lane:4,start:786,end:809,label:"786–809 Harun al-Rashid",date:"786–809",
   title:"Harun al-Rashid e l'età d'oro",
   text:"L'impero abbaside raggiunge la massima potenza sotto il califfo Harun al-Rashid, celebrato nelle novelle Mille e una notte. L'VIII secolo è l'età d'oro del mondo islamico: prosperano commerci, navigazione, agricoltura, scienze e arti. Dopo di lui l'impero si divide in emirati.",
   why:"Gli arabi portano in Occidente le cifre arabe (dall'India) e la carta (dalla Cina)."},
- {id:"sicilia",lane:4,start:825,approx:true,label:"IX sec.: la Sicilia",date:"Nel IX secolo",
+ {id:"sicilia",cent:9,yr:"IX sec.",short:"Gli arabi cominciano a conquistare la Sicilia.",lane:4,start:825,approx:true,label:"IX sec.: la Sicilia",date:"Nel IX secolo",
   title:"Inizia la conquista della Sicilia",
   text:"Nel IX secolo i musulmani cominciano a conquistare la Sicilia, sconfiggendo i bizantini. La loro avanzata continua anche verso oriente, fino ai confini dell'impero cinese.",
   why:"Spagna e Sicilia sono le due grandi terre d'Europa occupate dagli arabi."}
@@ -464,8 +459,11 @@ const ORD=[
  {y:774,t:"I franchi pongono fine al regno longobardo"}
 ];
 
+
+
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;}
 const $=id=>document.getElementById(id);
+const reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ---------- Schede ---------- */
 const tabs=Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
@@ -476,6 +474,7 @@ function showTab(t){
     b.tabIndex=on?0:-1;
     $(b.getAttribute("aria-controls")).hidden=!on;
   });
+  window.scrollTo(0,0);
 }
 tabs.forEach((b,i)=>{
   b.addEventListener("click",()=>showTab(b));
@@ -488,93 +487,73 @@ tabs.forEach((b,i)=>{
 });
 
 /* ---------- Linea del tempo ---------- */
-const LABELW=92,CW=170,ROW=28,PAD=12,MK=20;
-const xOf=y=>LABELW+(y-200)*CW/100;
+const ROM={3:"III",4:"IV",5:"V",6:"VI",7:"VII",8:"VIII",9:"IX"};
+const CENTS=[3,4,5,6,7,8,9];
+let filter=0;
+let allOpen=false;
+function laneName(id){return LANES.filter(l=>l.id===id)[0].name;}
 
-function layout(){
-  let maxExt=0;
+function renderChips(){
+  let h='<button class="chipbtn" data-f="0" aria-pressed="'+(filter===0)+'">Tutti</button>';
   LANES.forEach(l=>{
-    const evs=EVENTS.filter(e=>e.lane===l.id);
-    const ends=[];
+    h+='<button class="chipbtn l'+l.id+'" data-f="'+l.id+'" aria-pressed="'+(filter===l.id)+'"><span class="dot"></span>'+l.id+' · '+l.name+'</button>';
+  });
+  $("chips").innerHTML=h;
+}
+function renderTimeline(){
+  const sel=filter?EVENTS.filter(e=>e.lane===filter):EVENTS;
+  let s="";
+  CENTS.forEach(c=>{
+    const evs=sel.filter(e=>e.cent===c);
+    const from=(c-1)*100;
+    s+='<button class="sb" data-c="'+c+'"'+(evs.length?'':' disabled')+' aria-label="Secolo '+ROM[c]+', '+evs.length+' eventi"><b>'+ROM[c]+'</b><small>'+from+'–'+(from+100)+'</small><span class="dots">'+evs.map(e=>'<i class="l'+e.lane+'"></i>').join("")+'</span></button>';
+  });
+  $("strip").innerHTML=s;
+  let h="";
+  CENTS.forEach(c=>{
+    const evs=sel.filter(e=>e.cent===c).sort((a,b)=>a.start-b.start);
+    if(!evs.length)return;
+    const from=(c-1)*100;
+    h+='<section class="cs" id="cent-'+c+'"><div class="cb"><span class="rom">'+ROM[c]+' secolo</span><span class="yrs">dal '+from+' al '+(from+100)+'</span></div><div class="evs">';
     evs.forEach(e=>{
-      const pos=xOf(e.start);
-      const x0=e.end?pos:pos-MK/2;
-      const w=e.end?Math.max(xOf(e.end)-pos,MK):MK;
-      const lw=e.label.length*7.4+8;
-      const inside=!!e.end&&w>=lw+10;
-      const ext=inside?x0+w:x0+w+6+lw;
-      let r=0;
-      while(ends[r]!==undefined&&ends[r]+10>x0)r++;
-      ends[r]=ext;
-      e.row=r;e.x0=x0;e.w=w;e.inside=inside;
-      if(ext>maxExt)maxExt=ext;
+      h+='<details class="ev l'+e.lane+'"><summary><span class="yr">'+e.yr+'</span><span class="tx"><span class="chip">'+e.lane+' · '+laneName(e.lane)+'</span><span class="tt">'+e.title+'</span><span class="sh">'+e.short+'</span></span><span class="plus" aria-hidden="true"></span></summary><div class="more"><p>'+e.text+'</p><p class="why"><strong>Perché è importante.</strong> '+e.why+'</p></div></details>';
     });
-    l.rows=ends.length;
+    h+='</div></section>';
   });
-  return maxExt;
+  $("tlist").innerHTML=h;
+  allOpen=false;
+  $("toggleAll").textContent="Apri tutte le schede";
 }
-
-const tl=$("tl");
-const maxExt=layout();
-tl.style.width=Math.max(LABELW+7*CW,maxExt+16)+"px";
-tl.style.setProperty("--cw",CW+"px");
-tl.style.setProperty("--lw",LABELW+"px");
-
-(function buildTimeline(){
-  const ROM=["III","IV","V","VI","VII","VIII","IX"];
-  let h='<div class="axis"><div class="corner">secolo</div>';
-  ROM.forEach((r,i)=>{
-    h+='<div class="cent" style="left:'+(LABELW+i*CW)+'px;width:'+CW+'px"><b>'+r+'</b><small>'+(200+i*100)+'</small></div>';
-  });
-  h+='</div>';
-  LANES.forEach(l=>{
-    const height=PAD*2+l.rows*ROW;
-    h+='<div class="lane l'+l.id+'" style="height:'+height+'px"><div class="lane-label"><span class="n"><span class="dot"></span>'+l.short+'</span>'+l.name+'</div>';
-    EVENTS.filter(e=>e.lane===l.id).forEach(e=>{
-      const top=PAD+e.row*ROW+(ROW-24)/2;
-      const inner=e.inside
-        ?'<span class="mk bar in" style="width:'+e.w+'px">'+e.label+'</span>'
-        :'<span class="mk" style="width:'+e.w+'px"></span><span class="lb">'+e.label+'</span>';
-      h+='<button class="ev'+(e.approx?' approx':'')+'" data-id="'+e.id+'" style="left:'+e.x0+'px;top:'+top+'px" aria-pressed="false" aria-label="'+e.date+': '+e.title+'">'+inner+'</button>';
-    });
-    h+='</div>';
-  });
-  h+='<div class="guide" id="guide"></div>';
-  tl.innerHTML=h;
-})();
-
-let cur=0;
-function select(i,scroll){
-  cur=i;
-  const e=EVENTS[i];
-  const L=LANES.filter(l=>l.id===e.lane)[0];
-  tl.querySelectorAll(".ev").forEach(b=>b.setAttribute("aria-pressed",b.getAttribute("data-id")===e.id?"true":"false"));
-  const g=$("guide");
-  g.style.left=(e.end?e.x0:e.x0+MK/2-1)+"px";
-  $("detail").className="detail l"+e.lane;
-  $("dBody").innerHTML='<div class="d-head"><p class="d-date">'+e.date+'</p><span class="chip">Capitolo '+e.lane+' · '+L.name+'</span></div>'
-    +'<div class="d-body"><h3>'+e.title+'</h3><p>'+e.text+'</p><p class="why"><strong>Perché è importante.</strong> '+e.why+'</p></div>';
-  $("count").textContent=(i+1)+" di "+EVENTS.length;
-  $("prev").disabled=i===0;
-  $("next").disabled=i===EVENTS.length-1;
-  if(scroll){
-    const sc=$("tlScroll");
-    const reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    sc.scrollTo({left:Math.max(0,e.x0-sc.clientWidth/2+e.w/2),behavior:reduce?"auto":"smooth"});
-  }
-}
-tl.addEventListener("click",ev=>{
-  const b=ev.target.closest(".ev");
-  if(!b)return;
-  const id=b.getAttribute("data-id");
-  for(let i=0;i<EVENTS.length;i++){if(EVENTS[i].id===id){select(i,true);break;}}
+$("strip").addEventListener("click",e=>{
+  const b=e.target.closest(".sb");
+  if(!b||b.disabled)return;
+  const t=$("cent-"+b.getAttribute("data-c"));
+  if(t)t.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});
 });
-$("prev").addEventListener("click",()=>{if(cur>0)select(cur-1,true);});
-$("next").addEventListener("click",()=>{if(cur<EVENTS.length-1)select(cur+1,true);});
-select(0,false);
+$("chips").addEventListener("click",e=>{
+  const b=e.target.closest(".chipbtn");
+  if(!b)return;
+  filter=parseInt(b.getAttribute("data-f"),10);
+  renderChips();
+  renderTimeline();
+});
+$("toggleAll").addEventListener("click",()=>{
+  allOpen=!allOpen;
+  Array.prototype.forEach.call($("tlist").querySelectorAll("details.ev"),d=>{d.open=allOpen;});
+  $("toggleAll").textContent=allOpen?"Chiudi tutte le schede":"Apri tutte le schede";
+});
+renderChips();
+renderTimeline();
 
 /* ---------- Capitoli ---------- */
 (function buildChapters(){
+  let c="";
+  CHAPS.forEach((ch,i)=>{
+    c+='<details class="chap l'+ch.lane+'"'+(i===0?' open':'')+'><summary><span class="num">'+(i+1)+'</span><span class="cwho"><span class="ttl">'+ch.title+'</span><span class="insum">'+ch.sum+'</span></span><span class="plus" aria-hidden="true"></span></summary><div class="body"><ul>';
+    ch.points.forEach(p=>{c+='<li>'+p+'</li>';});
+    c+='</ul></div></details>';
+  });
+  $("chaps").innerHTML=c;
   let m="";
   MAP.forEach(g=>{
     m+='<div class="grp l'+g.lane+'"><h3>'+g.title+'</h3>';
@@ -588,13 +567,6 @@ select(0,false);
     m+='</div>';
   });
   $("map").innerHTML=m;
-  let c="";
-  CHAPS.forEach((ch,i)=>{
-    c+='<details class="chap l'+ch.lane+'"'+(i===0?' open':'')+'><summary><span class="num">'+(i+1)+'</span><span><span class="ttl">'+ch.title+'</span><span class="insum">'+ch.sum+'</span></span></summary><div class="body"><ul>';
-    ch.points.forEach(p=>{c+='<li>'+p+'</li>';});
-    c+='</ul></div></details>';
-  });
-  $("chaps").innerHTML=c;
 })();
 
 /* ---------- Parole ---------- */
@@ -711,8 +683,8 @@ odList.addEventListener("pointermove",e=>{
     if(y<r.top+r.height/2){before=kids[i];break;}
   }
   if(before!==dragLi.nextElementSibling)odList.insertBefore(dragLi,before);
-  if(y<70)window.scrollBy(0,-14);
-  else if(window.innerHeight-y<70)window.scrollBy(0,14);
+  if(y<90)window.scrollBy(0,-16);
+  else if(window.innerHeight-y<90)window.scrollBy(0,16);
 });
 function odEnd(){
   if(dragLi){dragLi.classList.remove("dragging");dragLi=null;}
