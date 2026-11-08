@@ -171,14 +171,18 @@ button.opt:hover:not([disabled]){border-color:var(--accent)}
 .miss{margin:14px 0;padding:0;list-style:none}
 .miss li{padding:10px 0;border-top:1px solid var(--line)}
 .miss small{display:block;color:var(--muted)}
-.od{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));max-width:900px}
-.od h3{font:700 1.05rem var(--f-display);margin:0 0 10px}
-.od ol{list-style:none;margin:0;padding:0}
-.od ol li{display:flex;gap:12px;align-items:baseline;padding:10px 12px;border:1.5px solid var(--good);background:var(--good-t);border-radius:10px;margin-bottom:8px}
-.yr{font:800 1.05rem var(--f-display);min-width:3ch;font-variant-numeric:tabular-nums}
-.od-msg{font-weight:700;min-height:1.6em;margin:0 0 12px}
-.shake{animation:shake .35s}
-@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.od-msg{font-weight:700;margin:0 0 12px;max-width:65ch;min-height:1.6em}
+.od-list{list-style:none;margin:0;padding:0;max-width:640px}
+.od-list li{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;margin-bottom:8px;user-select:none;-webkit-user-select:none}
+.grip{flex:none;width:44px;height:44px;display:grid;place-items:center;border-radius:8px;background:var(--surface-2);color:var(--muted);cursor:grab;touch-action:none}
+.grip::before{content:"";width:14px;height:21px;background:radial-gradient(circle,currentColor 1.7px,transparent 2.2px) 0 0/7px 7px}
+.od-t{flex:1;min-width:0}
+.od-yr{flex:none;font:800 .9rem var(--f-display);font-variant-numeric:tabular-nums}
+.od-btns{flex:none;display:flex;flex-direction:column;gap:2px}
+.mv{border:1px solid var(--line);background:var(--surface);border-radius:6px;width:32px;height:24px;line-height:1;font-size:.85rem;padding:0}
+.od-list li.dragging{box-shadow:0 6px 18px rgba(0,0,0,.25);border-color:var(--accent);cursor:grabbing}
+.od-list li.ok{border-color:var(--good);background:var(--good-t)}
+.od-list li.no{border-color:var(--bad);background:var(--bad-t)}
 .foot{margin-top:28px;color:var(--muted);font-size:.85rem;max-width:65ch}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
@@ -265,14 +269,11 @@ button.opt:hover:not([disabled]){border-color:var(--accent)}
   <section id="p-order" role="tabpanel" aria-labelledby="t-order" hidden>
     <div class="sec-head">
       <h2>Metti in ordine</h2>
-      <p>Tocca gli eventi nell'ordine in cui sono successi, dal più antico al più recente.</p>
+      <p>Trascina gli eventi con la maniglia a sinistra per metterli in ordine, dal più antico in alto al più recente in basso. Se preferisci, usa le frecce a destra.</p>
     </div>
     <p class="od-msg" id="odMsg" aria-live="polite"></p>
-    <div class="od">
-      <div><h3>Da ordinare</h3><div id="odPool"></div></div>
-      <div><h3>La tua linea del tempo</h3><ol id="odPlaced"></ol></div>
-    </div>
-    <p style="margin-top:14px"><button class="btn" id="odReset">Ricomincia</button></p>
+    <ol class="od-list" id="odList"></ol>
+    <p class="fc-row"><button class="btn solid" id="odCheck">Controlla</button><button class="btn" id="odReset">Mescola e ricomincia</button></p>
   </section>
 
   <p class="foot">Contenuti ricavati dall'Unità 1 del libro di storia, pagine 20–41. Le date segnate con il tratteggio indicano periodi o secoli, non anni precisi.</p>
@@ -677,41 +678,74 @@ $("quiz").addEventListener("click",e=>{
 quizRender();
 
 /* ---------- Ordina ---------- */
-const od={pool:[],placed:[],errors:0};
-function odRender(msg){
-  $("odMsg").textContent=msg;
-  $("odPool").innerHTML=od.pool.length
-    ?od.pool.map(o=>'<button class="opt" data-y="'+o.y+'">'+o.t+'</button>').join("")
-    :'<p>Hai ordinato tutti gli eventi.</p>';
-  $("odPlaced").innerHTML=od.placed.map(o=>'<li><span class="yr">'+o.y+'</span><span>'+o.t+'</span></li>').join("");
+const odList=$("odList");
+function odClear(){
+  Array.prototype.forEach.call(odList.children,li=>{
+    li.classList.remove("ok","no");
+    li.querySelector(".od-yr").textContent="";
+  });
 }
-function odReset(){
-  od.placed=[];od.errors=0;od.pool=shuffle(ORD.slice());
-  odRender("Quale evento è successo per primo?");
+function odBuild(){
+  const items=shuffle(ORD.slice());
+  odList.innerHTML=items.map(o=>'<li data-y="'+o.y+'"><div class="grip" aria-hidden="true"></div><span class="od-t">'+o.t+'</span><span class="od-yr"></span><span class="od-btns"><button class="mv" data-d="-1" aria-label="Sposta su">↑</button><button class="mv" data-d="1" aria-label="Sposta giù">↓</button></span></li>').join("");
+  $("odMsg").textContent="Quando hai finito, premi «Controlla».";
 }
-$("odPool").addEventListener("click",e=>{
-  const b=e.target.closest(".opt");
-  if(!b)return;
-  const y=parseInt(b.getAttribute("data-y"),10);
-  const next=ORD[od.placed.length];
-  if(y===next.y){
-    od.placed.push(next);
-    od.pool=od.pool.filter(o=>o.y!==y);
-    if(od.placed.length===ORD.length){
-      odRender(od.errors===0?"Perfetto, nessun errore!":"Completato, con "+od.errors+(od.errors===1?" errore.":" errori."));
-    }else{
-      odRender("Giusto! Qual è il prossimo?");
-    }
-  }else{
-    od.errors++;
-    $("odMsg").textContent="Non ancora: cerca l'evento più antico fra quelli rimasti.";
-    b.classList.remove("shake");
-    void b.offsetWidth;
-    b.classList.add("shake");
-  }
+let dragLi=null;
+odList.addEventListener("pointerdown",e=>{
+  const g=e.target.closest(".grip");
+  if(!g)return;
+  e.preventDefault();
+  dragLi=g.closest("li");
+  dragLi.classList.add("dragging");
+  odList.setPointerCapture(e.pointerId);
+  odClear();
 });
-$("odReset").addEventListener("click",odReset);
-odReset();
+odList.addEventListener("pointermove",e=>{
+  if(!dragLi)return;
+  const y=e.clientY;
+  let before=null;
+  const kids=Array.prototype.slice.call(odList.children);
+  for(let i=0;i<kids.length;i++){
+    if(kids[i]===dragLi)continue;
+    const r=kids[i].getBoundingClientRect();
+    if(y<r.top+r.height/2){before=kids[i];break;}
+  }
+  if(before!==dragLi.nextElementSibling)odList.insertBefore(dragLi,before);
+  if(y<70)window.scrollBy(0,-14);
+  else if(window.innerHeight-y<70)window.scrollBy(0,14);
+});
+function odEnd(){
+  if(dragLi){dragLi.classList.remove("dragging");dragLi=null;}
+}
+odList.addEventListener("pointerup",odEnd);
+odList.addEventListener("pointercancel",odEnd);
+odList.addEventListener("click",e=>{
+  const b=e.target.closest(".mv");
+  if(!b)return;
+  const li=b.closest("li");
+  const d=parseInt(b.getAttribute("data-d"),10);
+  odClear();
+  if(d<0&&li.previousElementSibling)odList.insertBefore(li,li.previousElementSibling);
+  if(d>0&&li.nextElementSibling)odList.insertBefore(li.nextElementSibling,li);
+  const nb=li.querySelector('.mv[data-d="'+d+'"]');
+  if(nb)nb.focus();
+});
+$("odCheck").addEventListener("click",()=>{
+  let ok=0;
+  Array.prototype.forEach.call(odList.children,(li,i)=>{
+    const y=parseInt(li.getAttribute("data-y"),10);
+    const right=y===ORD[i].y;
+    li.classList.toggle("ok",right);
+    li.classList.toggle("no",!right);
+    li.querySelector(".od-yr").textContent=right?String(y):"da spostare";
+    if(right)ok++;
+  });
+  $("odMsg").textContent=ok===ORD.length
+    ?"Perfetto! Sono tutti nell'ordine giusto."
+    :ok+" su "+ORD.length+" sono al posto giusto. Sposta gli altri e riprova.";
+});
+$("odReset").addEventListener("click",odBuild);
+odBuild();
 })();
 </script>
 
